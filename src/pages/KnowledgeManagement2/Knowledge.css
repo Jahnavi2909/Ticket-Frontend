@@ -1,0 +1,250 @@
+/* ---------------- Base Layout ---------------- */
+.knowledge-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: "Inter", sans-serif;
+}
+
+/* ---------------- Content Area ---------------- */
+.knowledge-content {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 250px; /* width of Sidebar2 */
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.knowledge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.knowledge-header h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.knowledge-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ---------------- Search Bar ---------------- */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 180px;
+  font-size: 0.9rem;
+}
+
+/* ---------------- Buttons ---------------- */
+.add-btn,
+.modal-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.add-btn:hover,
+.modal-actions button:hover {
+  background-color: #1e40af;
+}
+
+.loading {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1rem;
+  padding: 2rem;
+}
+
+/* ---------------- Table Styles ---------------- */
+.knowledge-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.knowledge-table th,
+.knowledge-table td {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.knowledge-table th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #374151;
+}
+
+.knowledge-table tr:hover {
+  background-color: #f9fafb;
+  transition: 0.2s ease-in-out;
+}
+
+.article-title {
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.article-title:hover {
+  text-decoration: underline;
+}
+
+/* ---------------- Action Buttons ---------------- */
+.actions button {
+  background: transparent;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.actions button:hover {
+  color: #2563eb;
+}
+
+/* ---------------- Modal Overlay ---------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+/* ---------------- Modal Box ---------------- */
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.modal-content h2 {
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  resize: none;
+  outline: none;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* ---------------- Modal Actions ---------------- */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.modal-actions button:first-child {
+  background-color: #9ca3af;
+}
+
+.modal-actions button:first-child:hover {
+  background-color: #6b7280;
+}
+
+/* ---------------- Close Button ---------------- */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s ease-in-out;
+}
+
+.close-btn:hover {
+  color: #111827;
+}
+
+/* ---------------- Animations ---------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 768px) {
+  .knowledge-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .modal-content {
+    width: 90%;
+  }
+
+  .knowledge-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .search-bar input {
+    width: 100px;
+  }
+}

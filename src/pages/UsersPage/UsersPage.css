@@ -1,0 +1,72 @@
+
+
+
+.users-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9fafb;
+}
+
+.users-main {
+  flex: 1;
+  padding: 20px;
+}
+
+.users-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+}
+
+.add-btn {
+  background-color: #2563eb;
+  color: rgba(255, 255, 255, 0.848);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  width: 200px;  
+ 
+  margin: 15px;
+}
+
+
+.users-table {
+  width: 85%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.472);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-left: auto;
+}
+
+.users-table th,
+.users-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.users-table th {
+  background-color: #064cd7;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.icon.edit {
+  color: #2563eb;
+}
+
+.icon.delete {
+  color: #dc2626;
+}

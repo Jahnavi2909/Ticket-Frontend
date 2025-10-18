@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.forgot{
+    border: 3px solid rgba(0, 0, 0, 0.251); 
+    border-radius: 10px;
+    width: 30%;
+    height: 380px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;    
+}
+
+.forgot h2{
+    text-align: center;
+    font-size: 30px;
+    margin: 25px;
+}
+
+
+.forgot h4{
+    text-align: center;
+    margin: 19px;
+    font-size: 21px;
+    color: cornflowerblue;
+}
+.forgot p{
+    margin: 18px;
+    font-size: 18px;
+    
+
+}
+.forgot input{
+    width: 70%;
+    margin-left: 68px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 550;
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 12px;
+}
+
+.forgot input::placeholder{
+
+    font-size:15px;
+    font-weight: 550;
+    
+}
+
+button{
+    width: 25%;
+    padding: 5px;
+    border-radius: 15px;
+}

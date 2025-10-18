@@ -1,0 +1,43 @@
+.users-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.users-page h2 {
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  text-align: left;
+}
+
+.users-table th {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.users-table tr:nth-child(even) {
+  background-color: #f1f5f9;
+}
+
+.users-table tr:hover {
+  background-color: #dbeafe;
+}
