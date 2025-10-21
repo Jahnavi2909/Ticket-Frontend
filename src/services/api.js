@@ -1,10 +1,11 @@
 import Cookies from "js-cookie";
+import axios from "axios";
 
 const API_BASE_URL =
   "http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com"; // Replace with your actual API URL
 
 class TicketAPI {
-  async getTickets() {
+   async getTickets() {
     console.log(Cookies.get("jwtToken"));
     try {
       const response = await fetch(`${API_BASE_URL}/api/tckts/get-tickets`, {
@@ -16,7 +17,7 @@ class TicketAPI {
         },
         body: JSON.stringify({
           pageNumber: 0,
-          pageSize: 10,
+          pageSize:50,
         
         }),
       });
@@ -75,20 +76,25 @@ class TicketAPI {
     }
   }
 
-  // api.js
+
+
+//from claude ai
 async updateTicket(ticketData) {
   try {
-    // Send null for empty objects instead of default empty values
+    // Simplify to match backend DTO - backend will handle the nested objects
     const ticketToSend = {
-      ...ticketData,
-      requesterId: ticketData.requester?.id || ticketData.requesterId || null,
-      assigneeId: ticketData.assignee?.id || ticketData.assigneeId || null,
-      requester: ticketData.requester || null,
-      assignee: ticketData.assignee || null,
-      comments: ticketData.comments || [],
-      sla: ticketData.sla || null
+      id: ticketData.id,
+      requesterId: ticketData.requesterId || ticketData.requester?.id,
+      assigneeId: ticketData.assigneeId || 0,
+      subject: ticketData.subject,
+      status: ticketData.status.toUpperCase(),
+      priority: ticketData.priority.toUpperCase(),
+      // Don't send nested objects unless backend DTO expects them
+      // Backend will fetch requester/assignee by IDs
     };
 
+    console.log("API: Sending update request:", JSON.stringify(ticketToSend, null, 2));
+    
     const response = await fetch(`${API_BASE_URL}/api/tckts/updt`, {
       method: "POST",
       headers: {
@@ -98,9 +104,23 @@ async updateTicket(ticketData) {
       body: JSON.stringify(ticketToSend),
     });
 
-    if (!response.ok) throw new Error("Failed to update ticket");
+    // Handle non-JSON responses (like HTML error pages)
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("Received non-JSON response:", await response.text());
+      throw new Error("Server returned an error. Please check if you're logged in.");
+    }
 
-    return await response.json(); // This will now return backend's { message, data } format
+    const responseData = await response.json();
+   
+    if (!response.ok) {
+      console.error("Update failed:", responseData);
+      throw new Error(responseData.message || "Failed to update ticket");
+    }
+    
+    console.log("Update successful:", responseData);
+    return responseData;
+    
   } catch (error) {
     console.error("Error updating ticket:", error);
     throw error;
@@ -108,12 +128,14 @@ async updateTicket(ticketData) {
 }
 
 
+
+
+
 async addComment(ticketId, commentData) {
   try {
-    // Construct full comment object expected by backend
     const commentToSend = {
       id: 0,
-      ticket: ticketId.toString(),
+      ticket: { id: ticketId }, // minimal TicketDto
       user: {
         id: commentData.userId,
         name: commentData.userName,
@@ -122,26 +144,35 @@ async addComment(ticketId, commentData) {
       },
       userId: commentData.userId,
       body: commentData.body,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
+
+    console.log("API: Sending comment:", JSON.stringify(commentToSend, null, 2));
 
     const response = await fetch(`${API_BASE_URL}/api/tckts/adcmnt/${ticketId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("jwtToken")}`
+        Authorization: `Bearer ${Cookies.get("jwtToken")}`,
       },
-      body: JSON.stringify(commentToSend)
+      body: JSON.stringify(commentToSend),
     });
 
-    if (!response.ok) throw new Error("Failed to add comment");
+    const responseData = await response.json();
 
-    return await response.json();
+    if (!response.ok) {
+      console.error("Add comment failed:", responseData);
+      throw new Error(responseData.message || "Failed to add comment");
+    }
+
+    console.log("Comment added successfully:", responseData);
+    return responseData;
   } catch (error) {
     console.error("Error adding comment:", error);
     throw error;
   }
 }
+
 
 
   async assignTicket(assignmentData) {
@@ -166,24 +197,33 @@ async addComment(ticketId, commentData) {
     }
   }
 
- 
 
-  async deleteTicket(id) {
+   async getBreachedTickets(pageNumber = 0, pageSize = 10) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tckts/dlt/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-           Authorization: `Bearer ${Cookies.get("jwtToken")}`
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/tckts/breached?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("jwtToken")}`,
+          },
+        }
+      );
 
-      if (!response.ok) throw new Error("Failed to delete ticket");
+      if (!response.ok) {
+        throw new Error("Failed to fetch breached tickets");
+      }
 
       return await response.json();
     } catch (error) {
-      console.error("Error deleting ticket:", error);
+      console.error("Error fetching breached tickets:", error);
       throw error;
     }
   }
+ 
+
+  
 }
 
 export default new TicketAPI();

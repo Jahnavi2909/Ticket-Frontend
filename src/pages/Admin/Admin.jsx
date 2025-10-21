@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import SupportPage1 from '../../pages/SupportPage1/SupportPage1'; 
 import KnowledgeManagement from '../../pages/KnowledgeManagement/KnowledgeManagement'; 
 import UsersPage from '../../pages/UsersPage/UsersPage'; 
+import usePreventBack from "../../components/usePreventBack/usePreventBack";
 
 const Admin = () => { 
+     usePreventBack();
     const [activePage, setActivePage] = useState('tickets'); 
     
     return (

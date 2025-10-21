@@ -84,20 +84,7 @@ navigate('/ChangePassword');
                 <div className="profile-avatar">
                   <span>👤</span>
                 </div>
-                <div className="profile-details">
-                  <div className="profile-field">
-                    <label>Name:</label>
-                    <span>{userProfile.name}</span>
-                  </div>
-                  <div className="profile-field">
-                    <label>Email:</label>
-                    <span>{userProfile.email}</span>
-                  </div>
-                  <div className="profile-field">
-                    <label>Role:</label>
-                    <span>{userProfile.role}</span>
-                  </div>
-                </div>
+                
               </div>
 
               <button

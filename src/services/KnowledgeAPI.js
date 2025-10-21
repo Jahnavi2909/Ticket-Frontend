@@ -4,25 +4,6 @@ const API_BASE_URL =
   "http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com";
 
 const KnowledgeAPI = {
-  // 🔹 Get all KB Articles
-  // async getAllArticles() {
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/api/kb/gtallkb`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${Cookies.get("jwtToken")}`,
-  //       },
-  //     });
-
-  //     if (!response.ok) throw new Error("Failed to fetch articles");
-  //     const result = await response.json();
-  //     return result.data || [];
-  //   } catch (error) {
-  //     console.error("Error fetching articles:", error);
-  //     throw error;
-  //   }
-  // },
 
   async getAllArticles(pagination = { pageNumber: 0, pageSize:  15}) {
   try {

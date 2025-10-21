@@ -1,7 +1,7 @@
 import {jwtDecode} from "jwt-decode";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { loginUser } from "../../services/loginAPIs";
 import Cookies from 'js-cookie';
 
@@ -11,6 +11,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+
+
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,25 +27,29 @@ const Login = () => {
 
       // response.data is your token
       const token = response.data;
-      console.log(token)
+      // console.log(token)
       Cookies.set("jwtToken", token,{ expires: 7 });
 
       // Decode token to extract role
       const decoded = jwtDecode(token);
+      // console.log("Decoded Token:", decoded);
+
+
       let role = decoded.role?.toLowerCase(); // "admin" / "user" / "agent"
       if (role === "support_agent") role = "agent";
 
+      
       localStorage.setItem("role", role);
 
       switch (role) {
         case "admin":
-          navigate("/admin");
+          navigate("/admin", { replace: true });
           break;
         case "user":
-          navigate("/user");
+          navigate("/user" , { replace: true });
           break;
         case "agent":
-          navigate("/agent");
+          navigate("/agent", { replace: true });
           break;
         default:
           setError("Invalid role");
@@ -53,41 +61,7 @@ const Login = () => {
     }
   };
 
-  // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setIsLoading(true);
-
-  //   try {
-  //     const data = await loginUser(email, password);
-
-  //     // ✅ Save token to localStorage
-  //     localStorage.setItem("token", data.token);
-  //     localStorage.setItem("role", data.role);
-
-  //     console.log("Login successful:", data);
-
-  //     switch (data.role) {
-  //       case "admin":
-  //         navigate("/admin");
-  //         break;
-  //       case "user":
-  //         navigate("/user");
-  //         break;
-  //       case "agent":
-  //         navigate("/agent");
-  //         break;
-  //       default:
-  //         setError("Invalid role");
-  //     }
-  //     // Redirect or update page
-  //     // Example: setCurrentPage("dashboard");
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+ 
 
   const goToRegister = () => navigate("/register");
 
@@ -151,58 +125,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// const Login = () => {
-
-//      const [role, setRole] = useState(""); // state to track dropdown value
-//   const navigate = useNavigate();
-
-//   const handleLogin = () => {
-//     if (role === "user") {
-//       navigate("/user");
-//     } else if (role === "support") {
-//       navigate("/support");
-//     } else if (role === "/admin") {
-//       navigate("../Dashboard/Dashboard.jsx");}
-//     // } else {
-//     //   alert("Please select a role before logging in!");
-//     // }
-//   };
-
-//   return (
-//     <div>
-//       <Nav />
-//       <h1 className="head">Let's get Connected!</h1>
-//       <div className="Loginform">
-//         <h1>Login</h1>
-//         <form action="#" className="formm">
-//           <select
-//           value={role}
-//           onChange={(e) => setRole(e.target.value)} required>
-//             <option >Select A Role</option>
-//             <option >Login As User</option>
-//             <option >Login As Support</option>
-//             <option >Login As Admin</option>
-//           </select>
-//           <input type="text" placeholder="Enter Your UserName" />
-//           <input type="password" placeholder="Enter Your Password" required />
-//         </form>
-
-//         <div className="rm">
-//           <input type="checkbox" />
-//           <label htmlFor="">Remember me</label>
-//           {/* <a href="">Forgot Password?</a> */}
-//           <Link to="/forgot">Forgot Password?</Link>
-//         </div>
-//         <button onClick={handleLogin}>Login</button>
-//         <div className="ca">
-//           <p>Don't have an Account?</p>
-//           {/* <a href="">Create Account</a> */}
-//           <Link to="/CreateAcc">Create Account</Link>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;

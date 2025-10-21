@@ -10,8 +10,8 @@ const TicketTable = ({ tickets, onTicketClick }) => {
     if (statusLower === 'open') return 'status-open';
     if (statusLower === 'closed') return 'status-closed';
     if (statusLower === 'pending') return 'status-pending';
-    if (statusLower === 'masell') return 'status-masell';
     return '';
+
   };
 
   const formatDateTime = (dateTime) => dateTime || '-';
@@ -41,9 +41,9 @@ const TicketTable = ({ tickets, onTicketClick }) => {
               onKeyDown={(e) => { if (e.key === 'Enter') onTicketClick(ticket); }}
             >
               <td className="subject-cell">{ticket.subject}</td>
-              <td><span className={`status-badge ${getStatusClass(ticket.status1)}`}>{ticket.status1}</span></td>
+              <td><span className={`status-badge ${getStatusClass(ticket.status)}`}>{ticket.status}</span></td>
               <td className="priority-cell">{ticket.priority}</td>
-              <td className="assignee-cell">{ticket.assignee}</td>
+              <td className="assignee-cell">{ticket.assignee?.name || 'unassigned'}</td>
               <td className="date-cell">{formatDateTime(ticket.createdAt)}</td>
               <td className="date-cell">{formatDateTime(ticket.updatedAt)}</td>
               <td className="actions-cell">

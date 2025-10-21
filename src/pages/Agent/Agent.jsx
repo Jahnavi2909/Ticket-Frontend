@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import SupportPage from '../../pages/SupportPage/SupportPage';
 import KnowledgeManagement2 from '../../pages/KnowledgeManagement2/KnowledgeManagement2';
+import usePreventBack from "../../components/usePreventBack/usePreventBack";
 
 
 const Agent = () => {
+   usePreventBack();
   const [activePage, setActivePage] = useState('tickets');
   return (
     <div>

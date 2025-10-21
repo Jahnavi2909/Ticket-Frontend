@@ -54,20 +54,6 @@ const App = () => {
 
 
 
-{/* Admin Page */ }
-
-
- {/* <Admin/>  */}
-
-
-{/* Support Agent Page */ }  
-{/* <Agent/>   */}
-
-
-{/* User page */ }
-{/* <User /> */}
-
-
 
 
 </div>

@@ -5,7 +5,7 @@ const TicketFilters3 = ({ activeFilter, setActiveFilter, searchQuery, setSearchQ
   const filters = [
     { id: 'all', label: 'All' },
     { id: 'open', label: 'Open' },
-    { id: 'pending', label: 'Pending' },
+    { id: 'IN_PROGRESS', label: 'Pending' },
     { id: 'closed', label: 'Closed' },
   ];
 
