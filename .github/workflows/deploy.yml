@@ -24,6 +24,13 @@ jobs:
       - name: Build Project
         run: CI=false npm run build
 
+      - name: Debug - Check Build Folder
+        run: |
+          echo "Listing repo root:"
+          ls -la
+          echo "Listing build folder:"
+          ls -la build || echo "Build folder not found!"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -35,7 +42,9 @@ jobs:
         run: aws s3 sync build/ s3://ticketfrontends --delete
 
       - name: Invalidate CloudFront Cache
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
+
