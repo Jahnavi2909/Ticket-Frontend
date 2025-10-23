@@ -10,20 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
+      # 3️⃣ Install dependencies
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
+      # 4️⃣ Build the project (creates build/)
       - name: Build Project
         run: CI=false npm run build
 
+      # 5️⃣ Debug step: check if build folder exists
       - name: Debug - Check Build Folder
         run: |
           echo "Listing repo root:"
@@ -31,6 +36,7 @@ jobs:
           echo "Listing build folder:"
           ls -la build || echo "Build folder not found!"
 
+      # 6️⃣ Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -38,13 +44,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
+      # 7️⃣ Deploy build/ folder to S3
       - name: Deploy to S3
         run: aws s3 sync build/ s3://ticketfrontends --delete
 
+      # 8️⃣ Optional: Invalidate CloudFront cache if secret is set
       - name: Invalidate CloudFront Cache
-        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
-
