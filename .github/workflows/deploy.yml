@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Checkout repo
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -24,17 +24,17 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      # 4️⃣ Build the project (creates build/)
+      # 4️⃣ Build project (creates dist/)
       - name: Build Project
         run: CI=false npm run build
 
-      # 5️⃣ Debug step: check if build folder exists
+      # 5️⃣ Debug step: verify dist folder
       - name: Debug - Check Build Folder
         run: |
           echo "Listing repo root:"
           ls -la
-          echo "Listing build folder:"
-          ls -la build || echo "Build folder not found!"
+          echo "Listing dist folder:"
+          ls -la dist || echo "Dist folder not found!"
 
       # 6️⃣ Configure AWS credentials
       - name: Configure AWS credentials
@@ -44,11 +44,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      # 7️⃣ Deploy build/ folder to S3
+      # 7️⃣ Deploy dist/ to S3
       - name: Deploy to S3
-        run: aws s3 sync build/ s3://ticketfrontends --delete
+        run: aws s3 sync dist/ s3://ticketfrontends --delete
 
-      # 8️⃣ Optional: Invalidate CloudFront cache if secret is set
+      # 8️⃣ Invalidate CloudFront cache (optional)
       - name: Invalidate CloudFront Cache
         env:
           CF_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
