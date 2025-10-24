@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 
 const API_BASE_URL =
-  "http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com"; // Replace with your actual API URL
+  "https://d1k8v9mokmxhao.cloudfront.net"; // Replace with your actual API URL
 
 class TicketAPI {
    async getTickets() {
