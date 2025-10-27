@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import "./CreateTicketModal3.css";
 import ticketAPI from "../../services/api";
+import { sendTicketEmail } from "../../utils/sendEmail"; // ✅ import the utility
+import Cookies from "js-cookie";
 
 const CreateTicketModal3 = ({ onClose, onTicketCreated }) => {
   const [requester, setRequester] = useState("");
@@ -23,7 +25,28 @@ const CreateTicketModal3 = ({ onClose, onTicketCreated }) => {
 
     setLoading(true);
     try {
-      await ticketAPI.raiseTicket(ticketData);
+      // 1️⃣ Create the ticket via API
+      const response = await ticketAPI.raiseTicket(ticketData);
+      const createdTicket = response?.data || {};
+
+      // 2️⃣ Trigger email notifications
+      const agent = {
+        name: Cookies.get("userName"),
+        email: Cookies.get("userEmail"),
+      };
+
+      await sendTicketEmail(agent, createdTicket, false);
+
+      // // send confirmation to agent (only if agent assigned)
+      // if (createdTicket.assigneeEmail) {
+      //   const agent = {
+      //     name: createdTicket.assigneeName,
+      //     email: createdTicket.assigneeEmail,
+      //   };
+      //   await sendTicketEmail(agent, createdTicket, true);
+      // }
+
+      // 3️⃣ Refresh UI
       onTicketCreated();
       onClose();
     } catch (err) {
