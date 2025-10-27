@@ -21,7 +21,6 @@ const SupportPage3 = ({ activePage, setActivePage }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   
-
   // ✅ Corrected ticket fetching logic
   // useEffect(() => {
   //   const fetchTickets = async () => {

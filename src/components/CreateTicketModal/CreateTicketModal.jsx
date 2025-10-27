@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import "./CreateTicketModal.css";
 import ticketAPI from "../../services/api";
+import { sendTicketEmail } from "../../utils/sendEmail"; // ✅ import the utility
+import Cookies from "js-cookie";
 
 const CreateTicketModal = ({ onClose, onTicketCreated, currentUserId }) => {
   const [requester, setRequester] = useState("");
@@ -20,14 +22,35 @@ const CreateTicketModal = ({ onClose, onTicketCreated, currentUserId }) => {
     const ticketData = {
       subject,
       priority,
-      status: "OPEN",          // default status for user-created ticket
+      status: "OPEN", // default status for user-created ticket
       requesterId: currentUserId, // current logged-in user's ID
-      assigneeId: null, 
+      assigneeId: null,
     };
 
     setLoading(true);
     try {
-      await ticketAPI.raiseTicket(ticketData);
+      // 1️⃣ Create the ticket via API
+      const response = await ticketAPI.raiseTicket(ticketData);
+      const createdTicket = response?.data || {};
+
+      // 2️⃣ Trigger email notifications
+      const user = {
+        name: Cookies.get("userName"),
+        email: Cookies.get("userEmail"),
+      };
+
+      await sendTicketEmail(user, createdTicket, false);
+
+      // send confirmation to agent (only if agent assigned)
+      if (createdTicket.assigneeEmail) {
+        const agent = {
+          name: createdTicket.assigneeName,
+          email: createdTicket.assigneeEmail,
+        };
+        await sendTicketEmail(agent, createdTicket, true);
+      }
+
+      // 3️⃣ Refresh UI
       onTicketCreated();
       onClose();
     } catch (err) {
@@ -54,7 +77,10 @@ const CreateTicketModal = ({ onClose, onTicketCreated, currentUserId }) => {
 
           <div className="form-group">
             <label>Priority</label>
-            <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+            >
               <option value="HIGH">HIGH</option>
               <option value="MEDIUM">MEDIUM</option>
               <option value="LOW">LOW</option>
