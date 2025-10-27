@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import axios from "axios";
+
 
 const API_BASE_URL =
   "https://d1k8v9mokmxhao.cloudfront.net"; // Replace with your actual API URL

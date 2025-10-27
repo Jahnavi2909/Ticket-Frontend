@@ -19,9 +19,11 @@ const App = () => {
     {/*the Routes is for the login pages. if we uncomment the routes  then we will get login pages*/ }
     <Routes Routes >
          <Route path="/" element={<Home/>}></Route>
+          <Route path="/Home" element={<Home />} />
         <Route path="/login" element={<Login/>}></Route>
          <Route path="/Register" element={<CreateAcc/>}></Route>
           <Route path="/ChangePassword" element={<ChangePassword />} />
+          
 
          <Route
         path="/admin"

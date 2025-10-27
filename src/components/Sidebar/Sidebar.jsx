@@ -1,19 +1,18 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Sidebar.css';
-import UserTable from '../UserTable/UserTable';
-import ChangePassword from '../../pages/ChangePassword/ChangePassword';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Sidebar.css";
+import UserTable from "../UserTable/UserTable";
+import ChangePassword from "../../pages/ChangePassword/ChangePassword";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [userProfile] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'User'
-  });
+  // const [userProfile] = useState({
+  //   name: 'John Doe',
+  //   email: 'john.doe@example.com',
+  //   role: 'User'
+  // });
 
   const handleProfileClick = () => {
     setShowProfileModal(true);
@@ -21,26 +20,27 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
   const handleChangePasswordClick = () => {
     setShowProfileModal(false);
-navigate('/ChangePassword');
-
+    navigate("/ChangePassword");
   };
 
-
-
+  const handleLogoutClick = () => {
+    setShowProfileModal(false);
+    navigate("/Home");
+  };
 
   return (
     <div className="sidebar">
       <h1 className="logo">User</h1>
       <ul>
         <li
-          className={activeTab === 'tickets' ? 'active' : ''}
-          onClick={() => setActiveTab('tickets')}
+          className={activeTab === "tickets" ? "active" : ""}
+          onClick={() => setActiveTab("tickets")}
         >
           Tickets
         </li>
         <li
-          className={activeTab === 'knowledge' ? 'active' : ''}
-          onClick={() => setActiveTab('knowledge')}
+          className={activeTab === "knowledge" ? "active" : ""}
+          onClick={() => setActiveTab("knowledge")}
         >
           Knowledge Base
         </li>
@@ -54,7 +54,10 @@ navigate('/ChangePassword');
 
       {/* Profile Modal */}
       {showProfileModal && (
-        <div className="profile-modal-overlay" onClick={() => setShowProfileModal(false)}>
+        <div
+          className="profile-modal-overlay"
+          onClick={() => setShowProfileModal(false)}
+        >
           <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
             <div className="profile-modal-header">
               <h2>Profile Details</h2>
@@ -71,7 +74,6 @@ navigate('/ChangePassword');
                 <div className="profile-avatar">
                   <span>👤</span>
                 </div>
-                
               </div>
 
               <button
@@ -79,6 +81,13 @@ navigate('/ChangePassword');
                 onClick={handleChangePasswordClick}
               >
                 🔐 Change Password
+              </button>
+
+              <button
+                className="change-password-button"
+                onClick={handleLogoutClick}
+              >
+                LogOut
               </button>
             </div>
           </div>

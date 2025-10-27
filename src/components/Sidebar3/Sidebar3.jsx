@@ -1,26 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Sidebar3.css';
-import ChangePassword from '../../pages/ChangePassword/ChangePassword';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Sidebar3.css";
+import ChangePassword from "../../pages/ChangePassword/ChangePassword";
 
 const Sidebar3 = ({ activeTab, setActiveTab }) => {
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [userProfile] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'User'
+    name: "John Doe",
+    email: "john.doe@example.com",
+    role: "User",
   });
 
   const handleProfileClick = () => {
     setShowProfileModal(true);
   };
 
+  const handleLogoutClick = () => {
+    setShowProfileModal(false);
+    navigate("/Home");
+  };
+
   const handleChangePasswordClick = () => {
     setShowProfileModal(false);
-navigate('/ChangePassword');
-
+    navigate("/ChangePassword");
   };
 
   // const handleBackFromChangePassword = () => {
@@ -32,34 +36,33 @@ navigate('/ChangePassword');
   //   return <ChangePassword setCurrentPage={() => handleBackFromChangePassword()} />;
   // }
 
-
   return (
     <div className="sidebar">
       <h1 className="logo">Admin</h1>
       <ul>
         <li
-          className={activeTab === 'tickets' ? 'active' : ''}
-          onClick={() => setActiveTab('tickets')}
+          className={activeTab === "tickets" ? "active" : ""}
+          onClick={() => setActiveTab("tickets")}
         >
           Tickets
         </li>
 
         <li
-          className={activeTab === 'users' ? 'active' : ''}
-          onClick={() => setActiveTab('users')}
+          className={activeTab === "users" ? "active" : ""}
+          onClick={() => setActiveTab("users")}
         >
           Users
         </li>
 
         <li
-          className={activeTab === 'knowledge' ? 'active' : ''}
-          onClick={() => setActiveTab('knowledge')}
+          className={activeTab === "knowledge" ? "active" : ""}
+          onClick={() => setActiveTab("knowledge")}
         >
           Knowledge Base
         </li>
       </ul>
 
-       {/* Profile Button at Bottom */}
+      {/* Profile Button at Bottom */}
       <button className="profile-button" onClick={handleProfileClick}>
         <span className="profile-icon">👤</span>
         <span className="profile-text">Profile</span>
@@ -67,7 +70,10 @@ navigate('/ChangePassword');
 
       {/* Profile Modal */}
       {showProfileModal && (
-        <div className="profile-modal-overlay" onClick={() => setShowProfileModal(false)}>
+        <div
+          className="profile-modal-overlay"
+          onClick={() => setShowProfileModal(false)}
+        >
           <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
             <div className="profile-modal-header">
               <h2>Profile Details</h2>
@@ -84,7 +90,6 @@ navigate('/ChangePassword');
                 <div className="profile-avatar">
                   <span>👤</span>
                 </div>
-                
               </div>
 
               <button
@@ -92,6 +97,13 @@ navigate('/ChangePassword');
                 onClick={handleChangePasswordClick}
               >
                 🔐 Change Password
+              </button>
+
+              <button
+                className="change-password-button"
+                onClick={handleLogoutClick}
+              >
+                LogOut
               </button>
             </div>
           </div>
