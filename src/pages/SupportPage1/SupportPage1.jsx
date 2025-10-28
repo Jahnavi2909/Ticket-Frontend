@@ -309,7 +309,6 @@
 //   const [loading, setLoading] = useState(false);
 //   const [showCreateModal, setShowCreateModal] = useState(false);
 //   const [selectedTicket, setSelectedTicket] = useState(null);
-  
 
 //    // Pagination
 //   const [pageNumber, setPageNumber] = useState(1); // frontend page number starts from 1
@@ -326,8 +325,8 @@
 //   //       // Extract the correct array from backend response
 //   //       const fetchedTickets = res?.data?.ticketDtos || [];
 
-//   //       console.log("Fetched tickets:", fetchedTickets);
-        
+//   //       console.log("✅ Fetched tickets:", fetchedTickets);
+
 //   //       setTickets(fetchedTickets);
 //   //     } catch (error) {
 //   //       console.error(" Error fetching tickets:", error);
@@ -347,11 +346,10 @@
 //   };
 //   init();
 // }, []);
-  
+
 //     useEffect(() => {
 //       filterTickets();
 //     }, [activeFilter, searchQuery, tickets]);
-
 
 //     const fetchTickets = async (page = 1) => {
 //         setLoading(true);
@@ -360,24 +358,22 @@
 //           // setTickets(data || []);
 //           // setFilteredTickets(data || []);
 //           const response = await TicketAPI.getTickets(page - 1, pageSize);
-        
+
 //       const ticketList = response?.data?.ticketDtos || [];
 //       const totalTickets = response?.data?.totalCount || ticketList.length;
 
 //        setTickets(ticketList);
 //           setFilteredTickets(ticketList);
 
-
 // const total = Math.ceil(totalTickets / pageSize);
 // setTotalPages(total > 0 ? total : 1);
-//  setPageNumber(page); 
+//  setPageNumber(page);
 //       console.log("✅ Fetched tickets:", ticketList);
-    
+
 //           // const ticketList =
 //           //   response?.data?.tickets || // if wrapped inside "data"
 //           //   response?.tickets || // if directly inside response
 //           //   [];
-         
 
 //         } catch (err) {
 //           console.error("Error fetching Tickets:",err);
@@ -415,7 +411,6 @@
 //     }
 //   };
 
-
 //       const filterTickets = () => {
 //     let filtered = Array.isArray(tickets) ? [...tickets] : [];
 
@@ -436,7 +431,6 @@
 
 //     setFilteredTickets(filtered);
 //   };
-
 
 //   // ✅ Apply filters and search
 //   // useEffect(() => {
@@ -550,7 +544,6 @@
 //               </div>
 //             )} */}
 
-
 //             {showCreateModal && (
 //               <CreateTicketModal2
 //                 onClose={() => setShowCreateModal(false)}
@@ -567,10 +560,8 @@
 //             )}
 //           </>
 
-          
 //         )}
 
-        
 //       </div>
 //     </div>
 //   );
@@ -578,34 +569,44 @@
 
 // export default SupportPage1;
 
-
-// src/pages/SupportPage1/SupportPage1.jsx
+// ✅ SupportPage1.jsx
 import React, { useState, useEffect } from "react";
 import Sidebar3 from "../../components/Sidebar3/Sidebar3";
 import TicketFilters2 from "../../components/TicketFilters2/TicketFilters2";
 import TicketTable2 from "../../components/TicketTable2/TicketTable2";
-import TicketAPI from "../../services/api";
+import TicketAPI from "../../services/api"; // ✅ Ensure this matches your import name
 import CreateTicketModal2 from "../../components/CreateTicketModal2/CreateTicketModal2";
 import TicketDialog2 from "../../components/TicketDialog2/TicketDialog2";
+
 import "./SupportPage1.css";
 
 const SupportPage1 = ({ activePage, setActivePage }) => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [tickets, setTickets] = useState([]);
+  const [tickets, setTickets] = useState([]); // ✅ default to empty array
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  
 
   // Pagination
-  const [pageNumber, setPageNumber] = useState(1);
+  const [pageNumber, setPageNumber] = useState(1); // frontend page number starts from 1
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 10;
 
-  // Popup for assignment confirmation
-  const [showAssignedPopup, setShowAssignedPopup] = useState(false);
+  //       console.log("✅ Fetched tickets:", fetchedTickets);
+
+  //       setTickets(fetchedTickets);
+  //     } catch (error) {
+  //       console.error("❌ Error fetching tickets:", error);
+  //       setTickets([]); // fallback to empty array
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchTickets();
+  // }, []);
 
   // Initial load
   useEffect(() => {
@@ -616,7 +617,6 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
     init();
   }, []);
 
-  // Filter tickets dynamically
   useEffect(() => {
     filterTickets();
   }, [activeFilter, searchQuery, tickets]);
@@ -624,7 +624,11 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
   const fetchTickets = async (page = 1) => {
     setLoading(true);
     try {
+      // const data = await ticketAPI.getTickets();
+      // setTickets(data || []);
+      // setFilteredTickets(data || []);
       const response = await TicketAPI.getTickets(page - 1, pageSize);
+
       const ticketList = response?.data?.ticketDtos || [];
       const totalTickets = response?.data?.totalCount || ticketList.length;
 
@@ -634,8 +638,12 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
       const total = Math.ceil(totalTickets / pageSize);
       setTotalPages(total > 0 ? total : 1);
       setPageNumber(page);
-
       console.log("✅ Fetched tickets:", ticketList);
+
+      // const ticketList =
+      //   response?.data?.tickets || // if wrapped inside "data"
+      //   response?.tickets || // if directly inside response
+      //   [];
     } catch (err) {
       console.error("Error fetching Tickets:", err);
       setTickets([]);
@@ -648,8 +656,9 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
 
   const notifyBreachedTickets = async () => {
     try {
-      const res = await TicketAPI.getBreachedTickets(0, 10);
+      const res = await TicketAPI.getBreachedTickets(0, 10); // first page, 10 tickets
       const breachedTickets = res?.data?.ticketDtos || [];
+      console.log("Breached tickets:", breachedTickets);
 
       for (const ticket of breachedTickets) {
         if (ticket.assigneeId) {
@@ -700,6 +709,29 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
     setFilteredTickets(filtered);
   };
 
+  // ✅ Apply filters and search
+  // useEffect(() => {
+  //   let filtered = Array.isArray(tickets) ? [...tickets] : [];
+
+  //   if (activeFilter !== 'all') {
+  //     filtered = filtered.filter(
+  //       (ticket) => ticket.status1?.toLowerCase() === activeFilter.toLowerCase()
+  //     );
+  //   }
+
+  //   if (searchQuery) {
+  //     filtered = filtered.filter(
+  //       (ticket) =>
+  //         ticket.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //         ticket.assignee?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //         ticket.priority?.toLowerCase().includes(searchQuery.toLowerCase())
+  //     );
+  //   }
+
+  //   setFilteredTickets(filtered);
+  // }, [activeFilter, searchQuery, tickets]);
+
+  // ✅ Open create modal
   const handleCreateTicket = () => {
     setShowCreateModal(true);
   };
@@ -722,34 +754,6 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
       fetchTickets(page);
-    }
-  };
-
-  //  When assigning a ticket
-  const handleTicketAssigned = async (ticket, agentId) => {
-    try {
-      const updatedTicket = {
-        ...ticket,
-        assigneeId: agentId,
-        status: "IN_PROGRESS",
-      };
-
-      await TicketAPI.updateTicket(updatedTicket);
-      console.log("✅ Ticket assigned successfully!");
-
-      // Update the ticket locally so "Assign" button disappears
-      setTickets((prevTickets) =>
-        prevTickets.map((t) =>
-          t.id === ticket.id ? updatedTicket : t
-        )
-      );
-
-      setShowAssignedPopup(true);
-      setTimeout(() => setShowAssignedPopup(false), 2000);
-      await fetchTickets(pageNumber);
-    } catch (error) {
-      console.error("❌ Error assigning ticket:", error);
-      alert("Failed to assign ticket. Check console for details.");
     }
   };
 
@@ -779,33 +783,58 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
               onTicketClick={handleTicketClick}
               onAssign={handleTicketAssigned}
             />
+
+            {/* Pagination
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button
+                  onClick={() => goToPage(pageNumber - 1)}
+                  disabled={pageNumber === 1}
+                  className="pagination-btn"
+                >
+                  &lt;&lt; Previous
+                </button>
+
+                <div className="pagination-numbers">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => goToPage(i + 1)}
+                      className={`pagination-number ${pageNumber === i + 1 ? 'active' : ''}`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => goToPage(pageNumber + 1)}
+                  disabled={pageNumber === totalPages}
+                  className="pagination-btn"
+                >
+                  Next &gt;&gt;
+                </button>
+              </div>
+            )} */}
+
+            {showCreateModal && (
+              <CreateTicketModal2
+                onClose={() => setShowCreateModal(false)}
+                onTicketCreated={handleTicketCreated}
+              />
+            )}
+
+            {selectedTicket && (
+              <TicketDialog2
+                ticket={selectedTicket}
+                onClose={() => setSelectedTicket(null)}
+                onTicketUpdated={handleTicketCreated}
+              />
+            )}
           </>
         )}
-
-        {showCreateModal && (
-          <CreateTicketModal2
-            onClose={() => setShowCreateModal(false)}
-            onTicketCreated={handleTicketCreated}
-          />
-        )}
-
-        {selectedTicket && (
-          <TicketDialog2
-            ticket={selectedTicket}
-            onClose={() => setSelectedTicket(null)}
-            onTicketUpdated={handleTicketCreated}
-            onAssign={handleTicketAssigned}
-          />
-        )}
-
-        {/*  Assignment popup */}
-        {showAssignedPopup && (
-          <div className="assigned-popup">
-            🎉 Ticket Assigned & Status Updated to IN_PROGRESS!
-          </div>
-        )}
       </div>
-    </div>
+    </div>  
   );
 };
 
