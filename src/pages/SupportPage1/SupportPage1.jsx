@@ -574,7 +574,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar3 from "../../components/Sidebar3/Sidebar3";
 import TicketFilters2 from "../../components/TicketFilters2/TicketFilters2";
 import TicketTable2 from "../../components/TicketTable2/TicketTable2";
-import TicketAPI from "../../services/api"; // ✅ Ensure this matches your import name
+import TicketAPI from "../../services/api"; // Ensure this matches your import name
 import CreateTicketModal2 from "../../components/CreateTicketModal2/CreateTicketModal2";
 import TicketDialog2 from "../../components/TicketDialog2/TicketDialog2";
 
@@ -731,7 +731,7 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
   //   setFilteredTickets(filtered);
   // }, [activeFilter, searchQuery, tickets]);
 
-  // ✅ Open create modal
+  // Open create modal
   const handleCreateTicket = () => {
     setShowCreateModal(true);
   };
@@ -781,7 +781,7 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
             <TicketTable2
               tickets={filteredTickets}
               onTicketClick={handleTicketClick}
-              onAssign={handleTicketAssigned}
+              // onAssign={handleTicketAssigned}
             />
 
             {/* Pagination
