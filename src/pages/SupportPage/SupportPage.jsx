@@ -1,7 +1,7 @@
 
 // ✅ SupportPage1.jsx
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
+import Sidebar2 from '../../components/Sidebar2/Sidebar2';
 import TicketFilters3 from '../../components/TicketFilters3/TicketFilters3';
 import TicketTable3 from '../../components/TicketTable3/TicketTable3';
 import TicketAPI from '../../services/api'; // ✅ Ensure this matches your import name
@@ -153,7 +153,7 @@ const SupportPage = ({ activePage, setActivePage }) => {
 
   return (
     <div className="tickets-page">
-      <Sidebar activeTab={activePage} setActiveTab={setActivePage} />
+      <Sidebar2 activeTab={activePage} setActiveTab={setActivePage} />
 
       <div className="main-content">
         <div className="page-header">
