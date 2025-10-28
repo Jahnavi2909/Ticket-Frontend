@@ -1,210 +1,478 @@
-
-
-/* Overlay background */
+/* Ticket Dialog Overlay */
 .ticket-dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* Dialog box */
+/* Main Dialog Container */
 .ticket-dialog {
-  background-color: #ffffff;
-  border-radius: 12px;
-  width: 500px;
-  max-width: 90%;
-  padding: 20px 25px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Header */
+/* Dialog Header */
 .dialog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 10px;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
 }
 
 .dialog-header h3 {
   margin: 0;
-  font-size: 18px;
-  color: #2d3748;
+  font-size: 1.5rem;
+  color: #333;
 }
 
 .close-btn {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #718096;
-  transition: all 0.2s ease;
+  color: #666;
+  transition: color 0.2s;
 }
 
 .close-btn:hover {
-  color: #2c3e50;
+  color: #000;
 }
 
-/* Content */
+/* Dialog Content */
+.dialog-content {
+  padding: 20px;
+}
+
 .dialog-content p {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #4a5568;
+  margin: 10px 0;
+  line-height: 1.6;
 }
 
 .dialog-content label {
   display: block;
-  font-weight: 600;
-  margin-top: 10px;
+  margin-top: 15px;
   margin-bottom: 5px;
-  color: #2d3748;
+  font-weight: bold;
+  color: #333;
 }
 
-.dialog-content input {
+.dialog-content input,
+.dialog-content select,
+.dialog-content textarea {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.dialog-content input:focus,
+.dialog-content select:focus,
+.dialog-content textarea:focus {
   outline: none;
-  transition: border-color 0.2s;
+  border-color: #2196f3;
 }
 
-.dialog-content input:focus {
-  border-color: #3498db;
+.dialog-content h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 1.2rem;
 }
 
-/* Footer buttons */
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+/* Comments List */
+.comments-list {
+  max-height: 250px;
+  overflow-y: auto;
   margin-top: 10px;
-  flex-wrap: wrap;
+}
+
+.dialog-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.dialog-content ul li {
+  padding: 12px;
+  background: #f5f5f5;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border-left: 3px solid #2196f3;
+  position: relative;
+}
+
+.comment-time {
+  display: block;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 5px;
+}
+
+.no-comments {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Assignment Section */
+.assignment-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+/* Dialog Footer */
+.dialog-footer {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  background: #f8f9fa;
 }
 
 .dialog-footer button {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
+  padding: 10px 20px;
   border: none;
-  transition: all 0.2s ease;
-}
-
-.edit-btn {
-  background-color: #3498db;
-  color: white;
-}
-
-.edit-btn:hover {
-  background-color: #2980b9;
-}
-
-.delete-btn {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.delete-btn:hover {
-  background-color: #c0392b;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .save-btn {
-  background-color: #2ecc71;
+  background-color: #4caf50;
   color: white;
 }
 
-.save-btn:hover {
-  background-color: #27ae60;
+.save-btn:hover:not(:disabled) {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(76, 175, 80, 0.3);
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .cancel-btn {
-  background-color: #bdc3c7;
+  background-color: #f44336;
   color: white;
 }
 
 .cancel-btn:hover {
-  background-color: #95a5a6;
+  background-color: #da190b;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(244, 67, 54, 0.3);
 }
 
-/* Comment section */
+.edit-btn {
+  background-color: #2196f3;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #0b7dda;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(33, 150, 243, 0.3);
+}
+
+/* Assign Button */
+.assign-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.assign-btn:hover:not(:disabled) {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.assign-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* Comment Section */
 .comment-section {
-  border-top: 1px solid #e2e8f0;
-  padding-top: 15px;
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  background: #fafafa;
 }
 
 .comment-section h4 {
-  margin: 0 0 10px 0;
-  font-size: 16px;
-  color: #2d3748;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Admin Notice */
+.admin-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  color: #856404;
+  font-size: 0.9rem;
+}
+
+.notice-icon {
+  font-size: 1.2rem;
 }
 
 .comment-section textarea {
   width: 100%;
-  min-height: 70px;
-  padding: 8px 12px;
+  min-height: 80px;
+  padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
+  border-radius: 4px;
+  font-size: 1rem;
   resize: vertical;
-  transition: border-color 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
 .comment-section textarea:focus {
-  border-color: #3498db;
+  outline: none;
+  border-color: #2196f3;
 }
 
 .comment-btn {
   margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #3498db;
+  padding: 10px 20px;
+  background-color: #2196f3;
   color: white;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
   border: none;
-  transition: all 0.2s ease;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.comment-btn:hover {
-  background-color: #2980b9;
+.comment-btn:hover:not(:disabled) {
+  background-color: #0b7dda;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(33, 150, 243, 0.3);
 }
 
 .comment-btn:disabled {
-  background-color: #95a5a6;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* Success Popup */
+.success-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.success-popup-content {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  min-width: 320px;
+  animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.success-icon {
+  font-size: 3.5rem;
+  background: white;
+  color: #4caf50;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: checkmark 0.5s ease-in-out;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0) rotate(-45deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.success-popup-content h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.success-popup-content p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+/* Scrollbar Styling */
+.ticket-dialog::-webkit-scrollbar,
+.comments-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ticket-dialog::-webkit-scrollbar-track,
+.comments-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.ticket-dialog::-webkit-scrollbar-thumb,
+.comments-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.ticket-dialog::-webkit-scrollbar-thumb:hover,
+.comments-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .ticket-dialog {
-    width: 90%;
-    padding: 15px 20px;
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .dialog-header,
+  .dialog-content,
+  .dialog-footer,
+  .comment-section {
+    padding: 15px;
+  }
+
+  .dialog-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .success-popup-content {
+    min-width: 280px;
+    padding: 25px 30px;
+  }
+
+  .success-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 3rem;
+  }
+
+  .success-popup-content h3 {
+    font-size: 1.3rem;
   }
 
   .dialog-footer {
     flex-direction: column;
-    gap: 8px;
   }
 
-  .comment-btn {
+  .dialog-footer button {
     width: 100%;
+  }
+
+  .admin-notice {
+    font-size: 0.85rem;
+    padding: 8px 12px;
   }
 }
 
+@media (max-width: 480px) {
+  .ticket-dialog {
+    width: 98%;
+    border-radius: 4px;
+  }
 
+  .dialog-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .success-popup-content {
+    min-width: 250px;
+    padding: 20px 25px;
+  }
+
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2.5rem;
+  }
+
+  .success-popup-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .success-popup-content p {
+    font-size: 0.9rem;
+  }
+}
