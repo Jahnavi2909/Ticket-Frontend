@@ -556,7 +556,7 @@ const SupportPage1 = ({ activePage, setActivePage }) => {
           </>
         )}
       </div>
-    </div>
+    </div>  
   );
 };
 

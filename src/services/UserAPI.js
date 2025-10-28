@@ -2,7 +2,7 @@
 import Cookies from "js-cookie";
 
 const API_BASE_URL =
-  "https://d1k8v9mokmxhao.cloudfront.net"; // 🔧 Replace this with your real backend URL
+  "http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com"; // 🔧 Replace this with your real backend URL
 
 const UserAPI = {
   async getAllUsers(paginationRequest) {

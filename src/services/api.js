@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 
 
 const API_BASE_URL =
-  "https://d1k8v9mokmxhao.cloudfront.net"; // Replace with your actual API URL
+  "http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com"; // Replace with your actual API URL
 
 class TicketAPI {
    async getTickets() {
@@ -75,7 +75,6 @@ class TicketAPI {
       throw error;
     }
   }
-
 
 
 //from claude ai
