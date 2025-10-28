@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
-const API_BASE_URL = "http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com"; // 🔹 Replace with your backend URL
+const API_BASE_URL = "https://d1k8v9mokmxhao.cloudfront.net"; 
 
-// ✅ Register new user
+//  Register new user
 export const registerUser = async (name, email, password) => {
   const response = await fetch(`${API_BASE_URL}/api/ath/sgnp`, {
     method: "POST",
@@ -21,7 +21,7 @@ export const registerUser = async (name, email, password) => {
   return response.json();
 };
 
-// ✅ Login user (for your Login.jsx)
+// Login user (for your Login.jsx)
 export const loginUser = async (email, password) => {
   const response = await fetch(`${API_BASE_URL}/api/ath/lgn`, {
     method: "POST",
@@ -43,7 +43,7 @@ export const loginUser = async (email, password) => {
   return data;
 };
 
-// ✅ Change Password
+//  Change Password
 export const changePassword = async (email, oldPassword, newPassword) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/ath/chngpswrd`, {
