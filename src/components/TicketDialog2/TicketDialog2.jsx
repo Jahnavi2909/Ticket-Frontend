@@ -11,90 +11,32 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedTicket, setUpdatedTicket] = useState(ticket || {});
   const [loading, setLoading] = useState(false);
-  const [agents, setAgents] = useState([]);
-  const [selectedAgent, setSelectedAgent] = useState("");
+  const [agentId, setAgentId] = useState("");
   const [isAssigned, setIsAssigned] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [popupMessage, setPopupMessage] = useState("");
-
-  // Get current user info
-  const currentUserId = parseInt(Cookies.get("userId"));
-  const currentUserRole = Cookies.get("userRole");
-  const isAdmin = currentUserRole === "ADMIN" || currentUserRole === "SUPER_ADMIN";
+  const [isCommented, setIsCommented] = useState(false); // ✅ Disable after 1 comment
 
   useEffect(() => {
     setUpdatedTicket(ticket || {});
     // Check if ticket is already assigned
     const hasAssignee = ticket?.assignee?.id || ticket?.assigneeId;
     setIsAssigned(!!hasAssignee);
-    console.log("TicketDialog mounted with ticket:", ticket);
-    console.log("Is ticket already assigned:", !!hasAssignee);
-    console.log("Current user role:", currentUserRole);
-    fetchAgents();
-  }, [ticket]);
 
-  const fetchAgents = async () => {
-    try {
-      const res = await fetch(
-        `${
-          process.env.REACT_APP_API_BASE_URL ||
-          "https://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com"
-        }/api/usr/getAllSupportAgents`,
-        {
-          headers: { Authorization: `Bearer ${Cookies.get("jwtToken")}` },
-        }
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setAgents(data?.data || []);
-      } else {
-        console.error("Failed to fetch agents:", data.message);
-      }
-    } catch (err) {
-      console.error("Error fetching agents:", err);
+    // ✅ Check if already commented
+    if (ticket?.comments?.length > 0) {
+      setIsCommented(true);
     }
-  };
-
-  const showPopup = (message) => {
-    setPopupMessage(message);
-    setShowSuccessPopup(true);
-    setTimeout(() => {
-      setShowSuccessPopup(false);
-      setPopupMessage("");
-    }, 3000);
-  };
+  }, [ticket]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUpdatedTicket({ ...updatedTicket, [name]: value });
   };
 
-  const handleUpdate = async () => {
-    setLoading(true);
-    try {
-      const payload = {
-        id: updatedTicket.id,
-        requesterId: updatedTicket.requester?.id || updatedTicket.requesterId,
-        assigneeId: updatedTicket.assignee?.id || updatedTicket.assigneeId || null,
-        subject: updatedTicket.subject,
-        status: updatedTicket.status.toUpperCase(),
-        priority: updatedTicket.priority.toUpperCase(),
-      };
-      await ticketAPI.updateTicket(payload);
-      showPopup("Ticket Updated Successfully!");
-      onTicketUpdated();
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Update error:", err);
-      alert(`Failed to update ticket: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // ✅ When Admin assigns agent → Open → In Progress
   const handleAssignAgent = async () => {
-    if (!selectedAgent) {
-      alert("Please select an agent to assign the ticket.");
+    if (!agentId.trim()) {
+      alert("Please enter an Agent ID.");
       return;
     }
 
@@ -105,10 +47,9 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
 
     setLoading(true);
     try {
-      // Step 1: Assign the ticket
       const assignmentData = {
         id: updatedTicket.id,
-        assigneeId: parseInt(selectedAgent),
+        assigneeId: parseInt(agentId),
       };
       await ticketAPI.assignTicket(assignmentData);
 
@@ -120,104 +61,103 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
       const updatedTicketData = {
         id: updatedTicket.id,
         requesterId: updatedTicket.requester?.id || updatedTicket.requesterId,
-        assigneeId: parseInt(selectedAgent),
+        assigneeId: parseInt(agentId),
         subject: updatedTicket.subject,
         status: "IN_PROGRESS",
-        priority: updatedTicket.priority.toUpperCase(),
+        priority: updatedTicket.priority?.toUpperCase(),
       };
 
-      console.log("Updating ticket status to IN_PROGRESS:", updatedTicketData);
       await ticketAPI.updateTicket(updatedTicketData);
 
-      // Step 3: Update local state and mark as assigned
       setUpdatedTicket({
         ...updatedTicket,
-        assigneeId: parseInt(selectedAgent),
+        assigneeId: parseInt(agentId),
         status: "IN_PROGRESS",
       });
+
       setIsAssigned(true);
+      setShowSuccessPopup(true);
+      setTimeout(() => setShowSuccessPopup(false), 3000);
 
-      // Step 4: Show success popup
-      showPopup("Ticket Assigned Successfully!");
-
-      console.log("✅ Ticket successfully assigned and status updated to IN_PROGRESS!");
-      
-      // Notify parent component to refresh
       onTicketUpdated();
+      setAgentId("");
+      setIsEditing(false);
     } catch (err) {
-      console.error("Error assigning ticket:", err);
-      alert("Failed to assign ticket.");
+      console.error("Error assigning agent:", err);
+      alert("Failed to assign agent. Check console for details.");
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ When Admin comments → In Progress → Closed
   const handleAddComment = async () => {
     if (!comment.trim()) return alert("Please enter a comment.");
     setLoading(true);
     try {
       const currentUser = {
-        id: currentUserId,
+        id: parseInt(Cookies.get("userId")),
         name: Cookies.get("userName"),
         email: Cookies.get("userEmail"),
         role: Cookies.get("userRole"),
       };
 
       const newComment = {
-        userId: currentUserId,
+        userId: currentUser.id,
         body: comment,
       };
 
-      console.log("Adding comment:", newComment);
       const addedComment = await ticketAPI.addComment(ticket.id, newComment);
-      
-      // Update local comments
-      setUpdatedTicket({
-        ...updatedTicket,
-        comments: [...(updatedTicket.comments || []), addedComment.data],
-      });
 
-      const updatedComments = [
+      const newComments = [
         ...(updatedTicket.comments || []),
         addedComment.data,
       ];
-      setUpdatedTicket({ ...updatedTicket, comments: updatedComments });
-      setComment("");
 
-      // If admin commented and ticket is IN_PROGRESS, change status to CLOSED
-      if (isAdmin && (updatedTicket.status === "IN_PROGRESS" || ticket.status === "IN_PROGRESS")) {
-        console.log("Admin commented - changing status to CLOSED");
-        
-        const closedTicketData = {
-          id: updatedTicket.id || ticket.id,
-          requesterId: updatedTicket.requester?.id || ticket.requester?.id || updatedTicket.requesterId || ticket.requesterId,
-          assigneeId: updatedTicket.assignee?.id || ticket.assignee?.id || updatedTicket.assigneeId || ticket.assigneeId || null,
-          subject: updatedTicket.subject || ticket.subject,
-          status: "CLOSED",
-          priority: (updatedTicket.priority || ticket.priority).toUpperCase(),
-        };
-
-        console.log("Updating ticket to CLOSED:", closedTicketData);
-        await ticketAPI.updateTicket(closedTicketData);
-
-        // Update local state
-        setUpdatedTicket({
+      let newStatus = updatedTicket.status;
+      if (updatedTicket.status === "IN_PROGRESS") {
+        newStatus = "CLOSED";
+        await ticketAPI.updateTicket({
           ...updatedTicket,
-          status: "CLOSED",
+          status: newStatus,
         });
-
-        // Show popup
-        showPopup("Ticket Closed Successfully!");
-
-        // Notify parent to refresh
-        setTimeout(() => {
-          onTicketUpdated();
-        }, 1000);
       }
 
+      setUpdatedTicket({
+        ...updatedTicket,
+        comments: newComments,
+        status: newStatus,
+      });
+
+      onTicketUpdated();
+      setComment("");
+      setIsCommented(true); // ✅ Disable comment after first comment
     } catch (err) {
       console.error("Error adding comment:", err);
-      alert("Failed to add comment.");
+      alert("Failed to add comment. Check console.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    setLoading(true);
+    try {
+      const ticketToUpdate = {
+        id: updatedTicket.id,
+        requesterId: updatedTicket.requester?.id || updatedTicket.requesterId,
+        assigneeId:
+          updatedTicket.assignee?.id || updatedTicket.assigneeId || null,
+        subject: updatedTicket.subject,
+        status: updatedTicket.status?.toUpperCase(),
+        priority: updatedTicket.priority?.toUpperCase(),
+      };
+      await ticketAPI.updateTicket(ticketToUpdate);
+      onTicketUpdated();
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Update error:", err);
+      alert(`Failed to update ticket: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -230,13 +170,8 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
         <div className="success-popup">
           <div className="success-popup-content">
             <div className="success-icon">✓</div>
-            <h3>{popupMessage}</h3>
-            {popupMessage.includes("Assigned") && (
-              <p>Status changed: OPEN → IN_PROGRESS</p>
-            )}
-            {popupMessage.includes("Closed") && (
-              <p>Status changed: IN_PROGRESS → CLOSED</p>
-            )}
+            <h3>Agent Assigned Successfully!</h3>
+            <p>Status changed to IN_PROGRESS</p>
           </div>
         </div>
       )}
@@ -244,30 +179,45 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
       <div className="ticket-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header">
           <h3>Ticket Details</h3>
-          <button className="close-btn" onClick={onClose}>✖</button>
+          <button className="close-btn" onClick={onClose}>
+            ✖
+          </button>
         </div>
 
         <div className="dialog-content">
           {isEditing ? (
             <>
               <label>Subject:</label>
-              <input type="text" name="subject" value={updatedTicket.subject || ""} onChange={handleInputChange} />
+              <input
+                type="text"
+                name="subject"
+                value={updatedTicket.subject || ""}
+                onChange={handleInputChange}
+              />
 
               <label>Status:</label>
-              <select name="status" value={updatedTicket.status || "OPEN"} onChange={handleInputChange}>
+              <select
+                name="status"
+                value={updatedTicket.status || "OPEN"}
+                onChange={handleInputChange}
+              >
                 <option value="OPEN">Open</option>
                 <option value="IN_PROGRESS">In Progress</option>
                 <option value="CLOSED">Closed</option>
               </select>
 
               <label>Priority:</label>
-              <select name="priority" value={updatedTicket.priority || "MEDIUM"} onChange={handleInputChange}>
+              <select
+                name="priority"
+                value={updatedTicket.priority || "MEDIUM"}
+                onChange={handleInputChange}
+              >
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
                 <option value="HIGH">High</option>
               </select>
 
-              {/* Assignment Section */}
+              {/* ✅ Agent Assignment Section */}
               <div className="assignment-section">
                 <label>
                   Assign to Support Agent:
@@ -279,37 +229,16 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
                 </label>
                 <input
                   type="number"
-                  value={selectedAgent}
-                  onChange={(e) => setSelectedAgent(e.target.value)}
-                  placeholder={
-                    isAssigned
-                      ? `Currently assigned to ID: ${
-                          updatedTicket.assignee?.id || updatedTicket.assigneeId
-                        }`
-                      : "Enter agent ID"
-                  }
+                  placeholder="Enter Agent ID"
+                  value={agentId}
+                  onChange={(e) => setAgentId(e.target.value)}
                   disabled={isAssigned}
-                  style={{
-                    backgroundColor: isAssigned ? "#f0f0f0" : "white",
-                    cursor: isAssigned ? "not-allowed" : "text",
-                  }}
+                  className="agent-input"
                 />
-
                 <button
                   className="assign-btn"
                   onClick={handleAssignAgent}
-                  disabled={loading || isAssigned || !selectedAgent}
-                  style={{
-                    marginTop: "10px",
-                    backgroundColor: isAssigned ? "#cccccc" : "#4CAF50",
-                    cursor: isAssigned ? "not-allowed" : "pointer",
-                    opacity: isAssigned ? 0.6 : 1,
-                  }}
-                  title={
-                    isAssigned
-                      ? "Ticket is already assigned"
-                      : "Click to assign ticket"
-                  }
+                  disabled={loading || isAssigned || !agentId}
                 >
                   {loading
                     ? "Assigning..."
@@ -325,111 +254,72 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
               <p><strong>Subject:</strong> {ticket.subject}</p>
               <p>
                 <strong>Status:</strong>{" "}
-                <span
-                  style={{
-                    color:
-                      updatedTicket.status === "IN_PROGRESS"
-                        ? "#ff9800"
-                        : updatedTicket.status === "CLOSED"
-                        ? "#4caf50"
-                        : "#2196f3",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {updatedTicket.status}
+                <span className={`status-${ticket.status?.toLowerCase()}`}>
+                  {ticket.status}
                 </span>
               </p>
               <p><strong>Priority:</strong> {ticket.priority}</p>
               <p><strong>Requester:</strong> {ticket.requester?.name || "-"}</p>
               <p>
-                <strong>Subject:</strong> {ticket.subject}
+                <strong>Assignee ID:</strong>{" "}
+                {ticket.assignee?.id || ticket.assigneeId || "Unassigned"}
               </p>
-              <p>
-                <strong>Status:</strong> 
-                <span style={{ 
-                  color: updatedTicket.status === "IN_PROGRESS" || ticket.status === "IN_PROGRESS" ? "#ff9800" : 
-                         updatedTicket.status === "CLOSED" || ticket.status === "CLOSED" ? "#4caf50" : "#2196f3",
-                  fontWeight: "bold",
-                  marginLeft: "5px"
-                }}>
-                  {updatedTicket.status || ticket.status}
-                </span>
-              </p>
-              <p>
-                <strong>Priority:</strong> {ticket.priority}
-              </p>
-              <p>
-                <strong>Requester:</strong> {ticket.requester?.name || "-"}
-              </p>
-              <p>
-                <strong>Assignee:</strong>{" "}
-                {ticket.assignee?.name || "Unassigned"}
-                {ticket.assignee?.id && (
-                  <span style={{ color: "green", marginLeft: "5px" }}>
-                    (ID: {ticket.assignee.id})
-                  </span>
-                )}
-              </p>
-              <p>
-                <strong>Created At:</strong> {ticket.createdAt}
-              </p>
-              <p>
-                <strong>Updated At:</strong> {ticket.updatedAt}
-              </p>
-              <p><strong>Created At:</strong> {ticket.createdAt}</p>
-              <p><strong>Updated At:</strong> {ticket.updatedAt}</p>
 
-              <h4>Comments</h4>
-              <div className="comments-list">
-                {(updatedTicket.comments || []).length > 0 ? (
-                  <ul>
-                    {(updatedTicket.comments || []).map((c) => (
-                      <li key={c.id}>
-                        <strong>{c.user?.name || "Unknown"}:</strong> {c.body}
-                        <span className="comment-time">{c.createdAt || ""}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="no-comments">No comments yet</p>
-                )}
-              </div>
-            </> 
+              {/* ✅ Display Comments */}
+              {updatedTicket.comments && updatedTicket.comments.length > 0 && (
+                <div className="comments-list">
+                  <h4>Comments</h4>
+                  {updatedTicket.comments.map((c, i) => (
+                    <div key={i} className="comment-item">
+                      <strong>Admin:</strong> {c.body}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
         <div className="dialog-footer">
           {isEditing ? (
             <>
-              <button className="save-btn" onClick={handleUpdate} disabled={loading}>
+              <button
+                className="save-btn"
+                onClick={handleUpdate}
+                disabled={loading}
+              >
                 {loading ? "Saving..." : "Save"}
               </button>
-              <button className="cancel-btn" onClick={() => setIsEditing(false)}>Cancel</button>
+              <button className="cancel-btn" onClick={() => setIsEditing(false)}>
+                Cancel
+              </button>
             </>
           ) : (
-            <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+            <button className="edit-btn" onClick={() => setIsEditing(true)}>
+              Edit
+            </button>
           )}
         </div>
 
+        {/* ✅ Add Comment Section */}
         <div className="comment-section">
           <h4>Add Comment</h4>
-          {isAdmin && (updatedTicket.status === "IN_PROGRESS" || ticket.status === "IN_PROGRESS") && (
-            <div className="admin-notice">
-              <span className="notice-icon">ℹ️</span>
-              <span>Adding a comment will close this ticket</span>
-            </div>
-          )}
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Write your comment..."
+            disabled={isCommented} // disable after first comment
           />
           <button
             className="comment-btn"
             onClick={handleAddComment}
-            disabled={loading}
+            disabled={loading || isCommented}
           >
-            {loading ? "Submitting..." : isAdmin && (updatedTicket.status === "IN_PROGRESS" || ticket.status === "IN_PROGRESS") ? "Submit & Close Ticket" : "Submit Comment"}
+            {loading
+              ? "Submitting..."
+              : isCommented
+              ? "Comment Submitted"
+              : "Submit Comment"}
           </button>
         </div>
       </div>
@@ -439,7 +329,12 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
 
 const TicketDialog = (props) => {
   if (typeof document === "undefined") return null;
-  return ReactDOM.createPortal(<TicketDialogContent {...props} />, document.body);
+  return ReactDOM.createPortal(
+    <TicketDialogContent {...props} />,
+    document.body
+  );
 };
 
 export default TicketDialog;
+
+

@@ -32,7 +32,7 @@ export const loginUser = async (email, password) => {
       Authorization: `Bearer ${Cookies.get("jwtToken")}`
     },
     body: JSON.stringify({ email, password }),
-    credentials:"include",
+    credentials: "include",
   });
 
   if (!response.ok) {
