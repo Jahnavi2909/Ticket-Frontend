@@ -193,6 +193,7 @@ const SupportPage3 = ({ activePage, setActivePage }) => {
             {/* ✅ Pass tickets safely */}
             <TicketTable
               tickets={filteredTickets}
+              
               onTicketClick={handleTicketClick}
             />
 

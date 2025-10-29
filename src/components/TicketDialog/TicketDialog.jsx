@@ -25,31 +25,30 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
   const handleUpdate = async () => {
   setLoading(true);
   try {
-    // Only send what the backend needs
     const ticketToUpdate = {
       id: updatedTicket.id,
-      requesterId: updatedTicket.requester?.id || updatedTicket.requesterId,
-      assigneeId: updatedTicket.assigneeId || 0,
       subject: updatedTicket.subject,
-      status: updatedTicket.status.toUpperCase(),
-      priority: updatedTicket.priority.toUpperCase(),
+      status: updatedTicket.status?.toUpperCase() || "OPEN",
+      priority: updatedTicket.priority?.toUpperCase() || "MEDIUM",
+        assigneeId: updatedTicket.assignee?.id || null, // ✅ FIX
+      requesterId: updatedTicket.requester?.id || null, // ✅ FIX
     };
 
     console.log("Sending update payload:", ticketToUpdate);
 
     const result = await ticketAPI.updateTicket(ticketToUpdate);
-    
+
     console.log("Update result:", result);
     onTicketUpdated();
     setIsEditing(false);
-    
   } catch (err) {
     console.error("Update error:", err);
-    alert(`Failed to update ticket: ${err.message}`);
+    alert("Failed to update ticket. Check console for details.");
   } finally {
     setLoading(false);
   }
 };
+
 
 
 

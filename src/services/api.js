@@ -77,33 +77,81 @@ class TicketAPI {
   }
 
 
-//from claude ai
+
+// async updateTicket(ticketData) {
+//   try {
+//     // Simplify to match backend DTO - backend will handle the nested objects
+//     const ticketToSend = {
+//       id: ticketData.id,
+//       requesterId: ticketData.requesterId || ticketData.requester?.id || null,
+//       assigneeId: ticketData.assigneeId || ticketData.assignee?.id || null,
+//       subject: ticketData.subject,
+//       status: ticketData.status.toUpperCase(),
+//       priority: ticketData.priority.toUpperCase(),
+//       // Don't send nested objects unless backend DTO expects them
+//       // Backend will fetch requester/assignee by IDs
+//     };
+
+//     console.log("API: Sending update request:", JSON.stringify(ticketToSend, null, 2));
+    
+//     const response = await fetch(`${API_BASE_URL}/api/tckts/updt`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${Cookies.get("jwtToken")}`
+//       },
+//       body: JSON.stringify(ticketToSend),
+//     });
+
+//     // Handle non-JSON responses (like HTML error pages)
+//     const contentType = response.headers.get("content-type");
+//     if (!contentType || !contentType.includes("application/json")) {
+//       console.error("Received non-JSON response:", await response.text());
+//       throw new Error("Server returned an error. Please check if you're logged in.");
+//     }
+
+//     const responseData = await response.json();
+   
+//     if (!response.ok) {
+//       console.error("Update failed:", responseData);
+//       throw new Error(responseData.message || "Failed to update ticket");
+//     }
+    
+//     console.log("Update successful:", responseData);
+//     return responseData;
+    
+//   } catch (error) {
+//     console.error("Error updating ticket:", error);
+//     throw error;
+//   }
+// }
+
+
 async updateTicket(ticketData) {
   try {
-    // Simplify to match backend DTO - backend will handle the nested objects
+    // Include IDs to satisfy backend DTO mapping
     const ticketToSend = {
       id: ticketData.id,
-      requesterId: ticketData.requesterId || ticketData.requester?.id,
-      assigneeId: ticketData.assigneeId || 0,
+      requesterId: ticketData.requesterId || ticketData.requester?.id || null,
+      assigneeId: ticketData.assigneeId || ticketData.assignee?.id || null,
       subject: ticketData.subject,
-      status: ticketData.status.toUpperCase(),
-      priority: ticketData.priority.toUpperCase(),
-      // Don't send nested objects unless backend DTO expects them
-      // Backend will fetch requester/assignee by IDs
+      status: ticketData.status?.toUpperCase(),
+      priority: ticketData.priority?.toUpperCase(),
+      createdAt: ticketData.createdAt || null,
+      updatedAt: new Date().toISOString(), // optional, backend can override
     };
 
     console.log("API: Sending update request:", JSON.stringify(ticketToSend, null, 2));
-    
+
     const response = await fetch(`${API_BASE_URL}/api/tckts/updt`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("jwtToken")}`
+        Authorization: `Bearer ${Cookies.get("jwtToken")}`,
       },
       body: JSON.stringify(ticketToSend),
     });
 
-    // Handle non-JSON responses (like HTML error pages)
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       console.error("Received non-JSON response:", await response.text());
@@ -111,15 +159,15 @@ async updateTicket(ticketData) {
     }
 
     const responseData = await response.json();
-   
+
     if (!response.ok) {
       console.error("Update failed:", responseData);
       throw new Error(responseData.message || "Failed to update ticket");
     }
-    
+
     console.log("Update successful:", responseData);
     return responseData;
-    
+
   } catch (error) {
     console.error("Error updating ticket:", error);
     throw error;
