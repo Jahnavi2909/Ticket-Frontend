@@ -66,4 +66,8 @@ export const changePassword = async (email, oldPassword, newPassword) => {
     console.error("Error changing password:", error);
     throw error;
   }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> Mithila
