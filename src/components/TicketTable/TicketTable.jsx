@@ -16,20 +16,20 @@ const TicketTable = ({ tickets, onTicketClick }) => {
     return date.toLocaleString();
   };
 
-  const renderAgentComments = (comments) => {
-    if (!Array.isArray(comments) || comments.length === 0) return "No comments";
-    const agentComments = comments.filter(
-      (c) =>
-        c.user?.role?.toLowerCase() === "support_agent" ||
-        c.userRole?.toLowerCase() === "support_agent"
-    );
-    if (agentComments.length === 0) return "No agent comments";
-    return agentComments.map((c, i) => (
-      <div key={i} className="comment-item">
-        <span className="comment-body"> {c.body}</span>
-      </div>
-    ));
-  };
+  // const renderAgentComments = (comments) => {
+  //   if (!Array.isArray(comments) || comments.length === 0) return "No comments";
+  //   const agentComments = comments.filter(
+  //     (c) =>
+  //       c.user?.role?.toLowerCase() === "support_agent" ||
+  //       c.userRole?.toLowerCase() === "support_agent"
+  //   );
+  //   if (agentComments.length === 0) return "No agent comments";
+  //   return agentComments.map((c, i) => (
+  //     <div key={i} className="comment-item">
+  //       <span className="comment-body"> {c.body}</span>
+  //     </div>
+  //   ));
+  // };
 
   return (
     <div className="ticket-table-container">
@@ -40,7 +40,6 @@ const TicketTable = ({ tickets, onTicketClick }) => {
             <th>Subject</th>
             <th>Status</th>
             <th>Priority</th>
-            <th>Comments</th>
             <th>Created At</th>
             <th>Updated At</th>
           </tr>
@@ -51,12 +50,13 @@ const TicketTable = ({ tickets, onTicketClick }) => {
               <tr
                 key={ticket.id}
                 className="ticket-row"
-                role="button"
-                tabIndex={0}
+                // role="button"
+                // tabIndex={0}
+                // onClick={() => onTicketClick(ticket)}
+                // onKeyDown={(e) => {
+                //   if (e.key === "Enter") onTicketClick(ticket);
+                // }}
                 onClick={() => onTicketClick(ticket)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") onTicketClick(ticket);
-                }}
               >
                 <td className="id-cell">{ticket.id}</td>
                 <td className="subject-cell">{ticket.subject || "-"}</td>
@@ -68,9 +68,9 @@ const TicketTable = ({ tickets, onTicketClick }) => {
                   </span>
                 </td>
                 <td className="priority-cell">{ticket.priority || "-"}</td>
-                <td className="comments-cell">
+                {/* <td className="comments-cell">
                   {renderAgentComments(ticket.comments)}
-                </td>
+                </td> */}
                 <td className="date-cell">
                   {formatDateTime(ticket.createdAt)}
                 </td>

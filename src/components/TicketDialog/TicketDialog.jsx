@@ -167,7 +167,29 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
               <p>
                 <strong>Updated At:</strong> {ticket.updatedAt}
               </p>
+            
 
+            {/* ✅ Display Agent Comments Only */}
+      <div className="comments-section">
+        <h4>Agent Comments</h4>
+        {ticket.comments && ticket.comments.length > 0 ? (
+          <ul>
+            {ticket.comments
+              .filter(
+                (c) =>
+                  c.userRole?.toLowerCase() === "support_agent" ||
+                  c.user?.role?.toLowerCase() === "support_agent"
+              )
+              .map((c, i) => (
+                <li key={i} className="comment-item">
+                  <strong>{c.user?.name || "Agent"}:</strong> {c.body}
+                </li>
+              ))}
+          </ul>
+        ) : (
+          <p>No comments yet.</p>
+        )}
+      </div>
              
             </>
           )}
