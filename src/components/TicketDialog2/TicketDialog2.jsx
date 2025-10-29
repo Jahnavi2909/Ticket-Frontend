@@ -1,4 +1,5 @@
 
+// src/components/TicketDialog2/TicketDialog2.jsx
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import "./TicketDialog2.css";
@@ -50,7 +51,6 @@ const TicketDialogContent = ({ ticket, onClose, onTicketUpdated }) => {
         id: updatedTicket.id,
         assigneeId: parseInt(agentId),
       };
-
       await ticketAPI.assignTicket(assignmentData);
 
       console.log("Assigning ticket:", assignmentData);
