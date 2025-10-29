@@ -1,5 +1,7 @@
 import Cookies from "js-cookie";
-const API_BASE_URL = "https://d1k8v9mokmxhao.cloudfront.net"; 
+
+const API_BASE_URL = "https://d1k8v9mokmxhao.cloudfront.net"; // 🔹 Replace with your backend URL
+
 
 //  Register new user
 export const registerUser = async (name, email, password) => {
@@ -65,4 +67,3 @@ export const changePassword = async (email, oldPassword, newPassword) => {
     throw error;
   }
 };
-
