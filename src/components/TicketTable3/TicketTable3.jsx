@@ -71,6 +71,7 @@
 
 import React from 'react';
 import './TicketTable3.css';
+import Cookies from "js-cookie";
 
 const TicketTable3 = ({ tickets, onTicketClick }) => {
   const getStatusClass = (status) => {

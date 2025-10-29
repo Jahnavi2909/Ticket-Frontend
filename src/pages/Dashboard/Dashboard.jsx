@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Ticket } from 'lucide-react';
 import Sidebar3  from "../../components/Sidebar3/Sidebar3";

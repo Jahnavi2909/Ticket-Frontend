@@ -1,4 +1,3 @@
-
 // ✅ SupportPage1.jsx
 
 import React, { useState, useEffect } from 'react';

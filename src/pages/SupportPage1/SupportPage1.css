@@ -155,6 +155,36 @@ body {
   transform: translateY(0);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+.assigned-popup {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #007bff;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
 
 /* Responsive Design */
 @media (max-width: 1024px) {

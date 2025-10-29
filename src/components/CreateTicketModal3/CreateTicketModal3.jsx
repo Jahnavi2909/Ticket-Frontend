@@ -1,4 +1,3 @@
-
 //code befroe deployment
 // // src/components/CreateTicketModal/CreateTicketModal.jsx
 // import React, { useState } from "react";
@@ -101,8 +100,6 @@
 
 // export default CreateTicketModal3;
 
-
-
 // src/components/CreateTicketModal/CreateTicketModal.jsx
 import React, { useState } from "react";
 import "./CreateTicketModal3.css";
@@ -123,12 +120,14 @@ const CreateTicketModal3 = ({ onClose, onTicketCreated, currentUserId }) => {
       setError("Please fill out all fields");
       return;
     }
+    
+    const userId = Cookies.get("userId");
 
     const ticketData = {
       subject,
       priority,
-      status: "OPEN", // default status for user-created ticket
-      requesterId: currentUserId, // current logged-in user's ID
+      status: "OPEN",
+      requesterId: currentUserId || userId,
       assigneeId: null,
     };
 
@@ -209,4 +208,3 @@ const CreateTicketModal3 = ({ onClose, onTicketCreated, currentUserId }) => {
 };
 
 export default CreateTicketModal3;
-
