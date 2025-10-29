@@ -65,4 +65,3 @@ export const changePassword = async (email, oldPassword, newPassword) => {
     throw error;
   }
 };
-
