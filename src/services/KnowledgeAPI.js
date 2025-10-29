@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 
 const API_BASE_URL =
-  "http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com";
+  "https://d1k8v9mokmxhao.cloudfront.net";
 
 const KnowledgeAPI = {
 

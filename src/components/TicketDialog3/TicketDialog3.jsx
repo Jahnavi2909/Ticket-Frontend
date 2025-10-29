@@ -1,6 +1,5 @@
 
 
-
 // //code with perfect working of editinf and commenting by connecting api's
 // import React, { useState, useEffect } from "react";
 // import ReactDOM from "react-dom";
@@ -127,6 +126,8 @@
 
 
 //code with perfect working of editing and commenting by connecting api's
+
+
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import "./TicketDialog3.css";
@@ -138,12 +139,39 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedTicket, setUpdatedTicket] = useState(ticket || {});
   const [loading, setLoading] = useState(false);
+  const [agents, setAgents] = useState([]);
+  const [selectedAgent, setSelectedAgent] = useState("");
 
   useEffect(() => {
     setUpdatedTicket(ticket || {});
     console.log("TicketDialog mounted with ticket:", ticket);
+    fetchAgents();
     return () => console.log("TicketDialog unmount");
   }, [ticket]);
+
+  const fetchAgents = async () => {
+    try {
+      const res = await fetch(
+        `${
+          process.env.REACT_APP_API_BASE_URL ||
+          "https://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com"
+        }/api/usr/getAllSupportAgents`,
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("jwtToken")}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setAgents(data?.data || []); // assuming backend returns { data: [agents] }
+      } else {
+        console.error("Failed to fetch agents:", data.message);
+      }
+    } catch (err) {
+      console.error("Error fetching agents:", err);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -151,46 +179,74 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
   };
 
   const handleUpdate = async () => {
-  setLoading(true);
-  try {
-    // Only send what the backend needs
-    const ticketToUpdate = {
+    setLoading(true);
+    try {
+      const ticketToUpdate = {
+        id: updatedTicket.id,
+        requesterId: updatedTicket.requester?.id || updatedTicket.requesterId,
+        assigneeId:
+          updatedTicket.assignee?.id || updatedTicket.assigneeId || null,
+        subject: updatedTicket.subject,
+        status: updatedTicket.status.toUpperCase(),
+        priority: updatedTicket.priority.toUpperCase(),
+      };
+
+      console.log("Sending update payload:", ticketToUpdate);
+      const result = await ticketAPI.updateTicket(ticketToUpdate);
+      console.log("Update result:", result);
+      onTicketUpdated();
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Update error:", err);
+      alert(`Failed to update ticket: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAssignAgent = async () => {
+    if (!selectedAgent) {
+      alert("Please select an agent to assign the ticket.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const assignmentData = {
+        id: updatedTicket.id,
+        assigneeId: parseInt(selectedAgent),
+      };
+
+      console.log("Assigning ticket:", assignmentData);
+      const result = await ticketAPI.assignTicket(assignmentData);
+ console.log("Assign Ticket Response:", result);
+    
+ const updatedTicketData = {
       id: updatedTicket.id,
       requesterId: updatedTicket.requester?.id || updatedTicket.requesterId,
-      assigneeId: updatedTicket.assigneeId || 0,
+      assigneeId: parseInt(selectedAgent),
       subject: updatedTicket.subject,
-      status: updatedTicket.status.toUpperCase(),
+      status: "IN_PROGRESS",
       priority: updatedTicket.priority.toUpperCase(),
     };
 
-    console.log("Sending update payload:", ticketToUpdate);
+    console.log("Updating ticket status to IN_PROGRESS:", updatedTicketData);
+    await ticketAPI.updateTicket(updatedTicketData);
 
-    const result = await ticketAPI.updateTicket(ticketToUpdate);
-    
-    console.log("Update result:", result);
-    onTicketUpdated();
-    setIsEditing(false);
-    
-  } catch (err) {
-    console.error("Update error:", err);
-    alert(`Failed to update ticket: ${err.message}`);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this ticket?")) return;
-    setLoading(true);
-    try {
-      await ticketAPI.deleteTicket(ticket.id);
+    // 3️⃣ Update local state and notify parent
+    setUpdatedTicket({
+      ...updatedTicket,
+      assigneeId: parseInt(selectedAgent),
+      status: "IN_PROGRESS",
+    });
+ 
+ 
+ alert("✅ Ticket successfully assigned!");
       onTicketUpdated();
-      onClose();
+      setSelectedAgent("");
+      setIsEditing(false);
     } catch (err) {
-      console.error(err);
-      alert("Failed to delete ticket.");
+      console.error("Error assigning ticket:", err);
+      alert("Failed to assign ticket. Check console for details.");
     } finally {
       setLoading(false);
     }
@@ -209,15 +265,10 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
 
       const newComment = {
         userId: currentUser.id,
-        userName: currentUser.name,
-        userEmail: currentUser.email,
-        userRole: currentUser.role,
         body: comment,
       };
 
       const addedComment = await ticketAPI.addComment(ticket.id, newComment);
-
-      // Update local ticket comments
       setUpdatedTicket({
         ...updatedTicket,
         comments: [...(updatedTicket.comments || []), addedComment.data],
@@ -225,9 +276,8 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
 
       setComment("");
     } catch (err) {
-      console.error(err);
-       console.error("Error adding comment:", err);
-      alert("Failed to add comment.check console.");
+      console.error("Error adding comment:", err);
+      alert("Failed to add comment. Check console.");
     } finally {
       setLoading(false);
     }
@@ -254,7 +304,16 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
                 onChange={handleInputChange}
               />
 
-            
+              <label>Status:</label>
+              <select
+                name="status"
+                value={updatedTicket.status || "OPEN"}
+                onChange={handleInputChange}
+              >
+                <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                <option value="CLOSED">Closed</option>
+              </select>
 
               <label>Priority:</label>
               <select
@@ -267,6 +326,25 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
                 <option value="HIGH">High</option>
               </select>
 
+              {/* ✅ Input field for assigning agent by ID */}
+              <label>Assign to Support Agent (Enter Agent ID):</label>
+              <input
+                type="number"
+                value={selectedAgent}
+                onChange={(e) => setSelectedAgent(e.target.value)}
+                placeholder="Enter agent ID"
+              />
+
+              
+
+              <button
+                className="assign-btn"
+                onClick={handleAssignAgent}
+                disabled={loading}
+                style={{ marginTop: "10px" }}
+              >
+                {loading ? "Assigning..." : "Assign Ticket"}
+              </button>
             </>
           ) : (
             <>
@@ -296,7 +374,14 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
                 <strong>Updated At:</strong> {ticket.updatedAt}
               </p>
 
-             
+              <h4>Comments</h4>
+              <ul>
+                {(updatedTicket.comments || []).map((c) => (
+                  <li key={c.id}>
+                    <strong>{c.user?.name || "Unknown"}:</strong> {c.body}
+                  </li>
+                ))}
+              </ul>
             </>
           )}
         </div>
@@ -319,16 +404,27 @@ const TicketDialog3 = ({ ticket, onClose, onTicketUpdated }) => {
               </button>
             </>
           ) : (
-            <>
-              <button className="edit-btn" onClick={() => setIsEditing(true)}>
-                Edit
-              </button>
-              
-            </>
+            <button className="edit-btn" onClick={() => setIsEditing(true)}>
+              Edit
+            </button>
           )}
         </div>
 
-        
+        <div className="comment-section">
+          <h4>Add Comment</h4>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Write your comment..."
+          />
+          <button
+            className="comment-btn"
+            onClick={handleAddComment}
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Submit Comment"}
+          </button>
+        </div>
       </div>
     </div>
   );

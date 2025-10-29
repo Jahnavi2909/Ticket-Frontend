@@ -1,26 +1,23 @@
-
-
-
 // ✅ SupportPage1.jsx
-import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import TicketFilters from '../../components/TicketFilters/TicketFilters';
-import TicketTable from '../../components/TicketTable/TicketTable';
-import TicketAPI from '../../services/api'; // ✅ Ensure this matches your import name
-import CreateTicketModal from '../../components/CreateTicketModal/CreateTicketModal';
+import React, { useState, useEffect } from "react";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import TicketFilters from "../../components/TicketFilters/TicketFilters";
+import TicketTable from "../../components/TicketTable/TicketTable";
+import TicketAPI from "../../services/api"; // ✅ Ensure this matches your import name
+import CreateTicketModal from "../../components/CreateTicketModal/CreateTicketModal";
 import TicketDialog from "../../components/TicketDialog/TicketDialog";
 
-import './SupportPage3.css';
+import "./SupportPage3.css";
 
 const SupportPage3 = ({ activePage, setActivePage }) => {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [tickets, setTickets] = useState([]); // ✅ default to empty array
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  
+
   // ✅ Corrected ticket fetching logic
   // useEffect(() => {
   //   const fetchTickets = async () => {
@@ -32,7 +29,7 @@ const SupportPage3 = ({ activePage, setActivePage }) => {
   //       const fetchedTickets = res?.data?.ticketDtos || [];
 
   //       console.log("✅ Fetched tickets:", fetchedTickets);
-        
+
   //       setTickets(fetchedTickets);
   //     } catch (error) {
   //       console.error("❌ Error fetching tickets:", error);
@@ -46,48 +43,66 @@ const SupportPage3 = ({ activePage, setActivePage }) => {
   // }, []);
 
   useEffect(() => {
-      fetchTickets();
-    }, []);
-  
-    useEffect(() => {
-      filterTickets();
-    }, [activeFilter, searchQuery, tickets]);
+    fetchTickets();
+  }, []);
 
+  useEffect(() => {
+    filterTickets();
+  }, [activeFilter, searchQuery, tickets]);
 
-    
-  
-    const fetchTickets = async () => {
-        setLoading(true);
-        try {
-          // const data = await ticketAPI.getTickets();
-          // setTickets(data || []);
-          // setFilteredTickets(data || []);
-          const response = await TicketAPI.getTickets();
-        
-      const ticketList = response?.data?.ticketDtos || [];
+  const fetchTickets = async () => {
+    setLoading(true);
+    try {
+      // const data = await ticketAPI.getTickets();
+      // setTickets(data || []);
+      // setFilteredTickets(data || []);
+      const response = await TicketAPI.getTickets();
 
-      console.log("✅ Fetched tickets:", ticketList);
-    
-          // const ticketList =
-          //   response?.data?.tickets || // if wrapped inside "data"
-          //   response?.tickets || // if directly inside response
-          //   [];
-          setTickets(ticketList);
-          setFilteredTickets(ticketList);
-        } catch (err) {
-          console.error("Error fetching Tickets:",err);
-          setTickets([]);
-          setFilteredTickets([]);
-        } finally {
-          setLoading(false);
-        }
-      };
+      const baseTickets = response?.data?.ticketDtos || [];
 
+      console.log("✅ Fetched tickets:", baseTickets);
 
-      const filterTickets = () => {
+      // const ticketList =
+      //   response?.data?.tickets || // if wrapped inside "data"
+      //   response?.tickets || // if directly inside response
+      //   [];
+
+      const ticketsWithComments = await Promise.all(
+        baseTickets.map(async (ticket) => {
+          try {
+            const fullTicket = await TicketAPI.getTicketById(ticket.id);
+
+            // Defensive check for comments array
+            const comments = fullTicket?.data?.comments || [];
+
+            return { ...ticket, comments };
+          } catch (err) {
+            console.error(
+              `❌ Failed to fetch comments for ticket ${ticket.id}:`,
+              err
+            );
+            return { ...ticket, comments: [] };
+          }
+        })
+      );
+
+      console.log("✅ Tickets with comments:", ticketsWithComments);
+
+      setTickets(ticketsWithComments);
+      setFilteredTickets(ticketsWithComments);
+    } catch (err) {
+      console.error("Error fetching Tickets:", err);
+      setTickets([]);
+      setFilteredTickets([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterTickets = () => {
     let filtered = Array.isArray(tickets) ? [...tickets] : [];
 
-    if (activeFilter !== 'all') {
+    if (activeFilter !== "all") {
       filtered = filtered.filter(
         (ticket) => ticket.status?.toLowerCase() === activeFilter.toLowerCase()
       );
@@ -97,14 +112,15 @@ const SupportPage3 = ({ activePage, setActivePage }) => {
       filtered = filtered.filter(
         (ticket) =>
           ticket.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          ticket.assignee?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          ticket.assignee?.name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           ticket.priority?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     setFilteredTickets(filtered);
   };
-
 
   // ✅ Apply filters and search
   // useEffect(() => {
@@ -148,7 +164,7 @@ const SupportPage3 = ({ activePage, setActivePage }) => {
       const ticketObj = fullTicket?.data ?? fullTicket ?? ticket;
       setSelectedTicket(ticketObj);
     } catch (error) {
-      console.error('Failed to fetch ticket details:', error);
+      console.error("Failed to fetch ticket details:", error);
       setSelectedTicket(ticket);
     }
   };

@@ -1,24 +1,25 @@
 
 // ✅ SupportPage1.jsx
+
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
+import Sidebar2 from '../../components/Sidebar2/Sidebar2';
 import TicketFilters3 from '../../components/TicketFilters3/TicketFilters3';
 import TicketTable3 from '../../components/TicketTable3/TicketTable3';
 import TicketAPI from '../../services/api'; // ✅ Ensure this matches your import name
 import CreateTicketModal3 from '../../components/CreateTicketModal3/CreateTicketModal3';
 import TicketDialog3 from "../../components/TicketDialog3/TicketDialog3";
-
-import './SupportPage.css';
+import Cookies from "js-cookie";
+import "./SupportPage.css";
 
 const SupportPage = ({ activePage, setActivePage }) => {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [tickets, setTickets] = useState([]); // ✅ default to empty array
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [tickets, setTickets] = useState([]); // default to empty array
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  
+
   // ✅ Corrected ticket fetching logic
   // useEffect(() => {
   //   const fetchTickets = async () => {
@@ -30,7 +31,7 @@ const SupportPage = ({ activePage, setActivePage }) => {
   //       const fetchedTickets = res?.data?.ticketDtos || [];
 
   //       console.log("✅ Fetched tickets:", fetchedTickets);
-        
+
   //       setTickets(fetchedTickets);
   //     } catch (error) {
   //       console.error("❌ Error fetching tickets:", error);
@@ -44,48 +45,44 @@ const SupportPage = ({ activePage, setActivePage }) => {
   // }, []);
 
   useEffect(() => {
-      fetchTickets();
-    }, []);
-  
-    useEffect(() => {
-      filterTickets();
-    }, [activeFilter, searchQuery, tickets]);
+    fetchTickets();
+  }, []);
 
+  useEffect(() => {
+    filterTickets();
+  }, [activeFilter, searchQuery, tickets]);
 
-    
-  
-    const fetchTickets = async () => {
-        setLoading(true);
-        try {
-          // const data = await ticketAPI.getTickets();
-          // setTickets(data || []);
-          // setFilteredTickets(data || []);
-          const response = await TicketAPI.getTickets();
-        
+  const fetchTickets = async () => {
+    setLoading(true);
+    try {
+      // const data = await ticketAPI.getTickets();
+      // setTickets(data || []);
+      // setFilteredTickets(data || []);
+      const response = await TicketAPI.getTickets();
+
       const ticketList = response?.data?.ticketDtos || [];
 
       console.log("✅ Fetched tickets:", ticketList);
-    
-          // const ticketList =
-          //   response?.data?.tickets || // if wrapped inside "data"
-          //   response?.tickets || // if directly inside response
-          //   [];
-          setTickets(ticketList);
-          setFilteredTickets(ticketList);
-        } catch (err) {
-          console.error("Error fetching Tickets:",err);
-          setTickets([]);
-          setFilteredTickets([]);
-        } finally {
-          setLoading(false);
-        }
-      };
 
+      // const ticketList =
+      //   response?.data?.tickets || // if wrapped inside "data"
+      //   response?.tickets || // if directly inside response
+      //   [];
+      setTickets(ticketList);
+      setFilteredTickets(ticketList);
+    } catch (err) {
+      console.error("Error fetching Tickets:", err);
+      setTickets([]);
+      setFilteredTickets([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const filterTickets = () => {
+  const filterTickets = () => {
     let filtered = Array.isArray(tickets) ? [...tickets] : [];
 
-    if (activeFilter !== 'all') {
+    if (activeFilter !== "all") {
       filtered = filtered.filter(
         (ticket) => ticket.status?.toLowerCase() === activeFilter.toLowerCase()
       );
@@ -95,7 +92,9 @@ const SupportPage = ({ activePage, setActivePage }) => {
       filtered = filtered.filter(
         (ticket) =>
           ticket.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          ticket.assignee?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          ticket.assignee?.name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           ticket.priority?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -103,28 +102,27 @@ const SupportPage = ({ activePage, setActivePage }) => {
     setFilteredTickets(filtered);
   };
 
-
   // ✅ Apply filters and search
-  // useEffect(() => {
-  //   let filtered = Array.isArray(tickets) ? [...tickets] : [];
+  useEffect(() => {
+    let filtered = Array.isArray(tickets) ? [...tickets] : [];
 
-  //   if (activeFilter !== 'all') {
-  //     filtered = filtered.filter(
-  //       (ticket) => ticket.status1?.toLowerCase() === activeFilter.toLowerCase()
-  //     );
-  //   }
+    if (activeFilter !== 'all') {
+      filtered = filtered.filter(
+        (ticket) => ticket.status1?.toLowerCase() === activeFilter.toLowerCase()
+      );
+    }
 
-  //   if (searchQuery) {
-  //     filtered = filtered.filter(
-  //       (ticket) =>
-  //         ticket.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         ticket.assignee?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         ticket.priority?.toLowerCase().includes(searchQuery.toLowerCase())
-  //     );
-  //   }
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (ticket) =>
+          ticket.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          ticket.assignee?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          ticket.priority?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
 
-  //   setFilteredTickets(filtered);
-  // }, [activeFilter, searchQuery, tickets]);
+    setFilteredTickets(filtered);
+  }, [activeFilter, searchQuery, tickets]);
 
   // ✅ Open create modal
   const handleCreateTicket = () => {
@@ -146,14 +144,14 @@ const SupportPage = ({ activePage, setActivePage }) => {
       const ticketObj = fullTicket?.data ?? fullTicket ?? ticket;
       setSelectedTicket(ticketObj);
     } catch (error) {
-      console.error('Failed to fetch ticket details:', error);
+      console.error("Failed to fetch ticket details:", error);
       setSelectedTicket(ticket);
     }
   };
 
   return (
     <div className="tickets-page">
-      <Sidebar activeTab={activePage} setActiveTab={setActivePage} />
+      <Sidebar2 activeTab={activePage} setActiveTab={setActivePage} />
 
       <div className="main-content">
         <div className="page-header">
@@ -182,6 +180,7 @@ const SupportPage = ({ activePage, setActivePage }) => {
               <CreateTicketModal3
                 onClose={() => setShowCreateModal(false)}
                 onTicketCreated={handleTicketCreated}
+                currentUserId={Cookies.get("userId")}
               />
             )}
 
@@ -200,22 +199,6 @@ const SupportPage = ({ activePage, setActivePage }) => {
 };
 
 export default SupportPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //code before deployment
 // //before making the code to layout of the page
@@ -237,20 +220,15 @@ export default SupportPage;
 //   const [loading, setLoading] = useState(false);
 //   const [showCreateModal, setShowCreateModal] = useState(false);
 //   const [selectedTicket, setSelectedTicket] = useState(null);
-  
-
 
 //   useEffect(() => {
 //       fetchTickets();
 //     }, []);
-  
+
 //     useEffect(() => {
 //       filterTickets();
 //     }, [activeFilter, searchQuery, tickets]);
 
-
-    
-  
 //     const fetchTickets = async () => {
 //         setLoading(true);
 //         try {
@@ -258,11 +236,11 @@ export default SupportPage;
 //           // setTickets(data || []);
 //           // setFilteredTickets(data || []);
 //           const response = await TicketAPI.getTickets();
-        
+
 //       const ticketList = response?.data?.ticketDtos || [];
 
 //       console.log("✅ Fetched tickets:", ticketList);
-    
+
 //           // const ticketList =
 //           //   response?.data?.tickets || // if wrapped inside "data"
 //           //   response?.tickets || // if directly inside response
@@ -277,7 +255,6 @@ export default SupportPage;
 //           setLoading(false);
 //         }
 //       };
-
 
 //       const filterTickets = () => {
 //     let filtered = Array.isArray(tickets) ? [...tickets] : [];
@@ -299,7 +276,6 @@ export default SupportPage;
 
 //     setFilteredTickets(filtered);
 //   };
-
 
 //   // ✅ Apply filters and search
 //   // useEffect(() => {
@@ -398,8 +374,6 @@ export default SupportPage;
 
 // export default SupportPage;
 
-
-
 //agent  can only see the ticekts creted by him and assigned by the admin
 // import React, { useState, useEffect } from "react";
 // import Sidebar2 from "../../components/Sidebar2/Sidebar2";
@@ -416,7 +390,7 @@ export default SupportPage;
 //   const [filteredTickets, setFilteredTickets] = useState([]);
 //   const [loading, setLoading] = useState(false);
 //   const [selectedTicket, setSelectedTicket] = useState(null);
-//   const [showCreateModal, setShowCreateModal] = useState(false); 
+//   const [showCreateModal, setShowCreateModal] = useState(false);
 
 //   useEffect(() => {
 //     fetchTickets();
@@ -436,7 +410,7 @@ export default SupportPage;
 //       if (userRole === "ADMIN") {
 //         // ✅ Admin sees everything
 //         visibleTickets = ticketList;
-//       } 
+//       }
 //       else if (userRole === "SUPPORT_AGENT") {
 //         // ✅ Agent sees:
 //         // 1️⃣ Tickets they created (as requester)
@@ -450,7 +424,7 @@ export default SupportPage;
 
 //         // remove unassigned tickets (no assignee)
 //         visibleTickets = visibleTickets.filter((t) => t.assignee && t.assignee.name);
-//       } 
+//       }
 //       else if (userRole === "USER") {
 //         // ✅ User sees only their own tickets
 //         visibleTickets = ticketList.filter(
@@ -513,4 +487,3 @@ export default SupportPage;
 // };
 
 // export default SupportPage;
-
