@@ -46,6 +46,7 @@
 // export default TicketFilters3;
 
 import React from 'react';
+import Cookies from "js-cookie";
 import './TicketFilters3.css';
 
 const TicketFilters3 = ({ activeFilter, setActiveFilter, searchQuery, setSearchQuery, onCreateTicket }) => {
