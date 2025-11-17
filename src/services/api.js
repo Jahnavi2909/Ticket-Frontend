@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 
 
 const API_BASE_URL =
-  "https://d1k8v9mokmxhao.cloudfront.net"; 
+  "https://d36lctvjywsudi.cloudfront.net"; 
 
 class TicketAPI {
    async getTickets() {

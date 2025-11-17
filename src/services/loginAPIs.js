@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const API_BASE_URL = "https://d1k8v9mokmxhao.cloudfront.net"; // 🔹 Replace with your backend URL
+const API_BASE_URL = "https://d36lctvjywsudi.cloudfront.net"; // 🔹 Replace with your backend URL
 
 
 //  Register new user
