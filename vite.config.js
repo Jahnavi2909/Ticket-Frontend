@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // All requests starting with /api will be forwarded
       '/api': {
-        target: 'http://team-env.eba-mghaptds.ap-south-1.elasticbeanstalk.com',
+        target: 'http://ec2-13-203-206-179.ap-south-1.compute.amazonaws.com',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api') // optional, can keep the same
