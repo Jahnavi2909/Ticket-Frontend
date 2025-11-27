@@ -2,7 +2,7 @@
 import Cookies from "js-cookie";
 
 const API_BASE_URL =
-  "https://d36lctvjywsudi.cloudfront.net"; // 🔧 Replace this with your real backend URL
+  "http://ec2-13-203-206-179.ap-south-1.compute.amazonaws.com:9090"; // 🔧 Replace this with your real backend URL
 
 
 const UserAPI = {
